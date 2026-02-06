@@ -127,14 +127,22 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </p>
         </div>
 
-        <form action={signOut}>
-          <button
-            className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
-            type="submit"
+        <div className="flex gap-3">
+          <Link
+            href={returnTo}
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
-            Sign out
-          </button>
-        </form>
+            Refresh
+          </Link>
+          <form action={signOut}>
+            <button
+              className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+              type="submit"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
       </header>
 
       {params.notice ? (
@@ -254,7 +262,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                   </tr>
                 </thead>
                 <tbody>
-                  {analytics.dailySeries.map((point) => (
+                  {[...analytics.dailySeries].reverse().map((point) => (
                     <tr key={point.day} className="border-t border-zinc-100">
                       <td className="px-3 py-2 text-zinc-700">{point.day}</td>
                       <td className="px-3 py-2 text-zinc-900">{point.scans}</td>
@@ -426,7 +434,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
                   <div className="mt-3 text-sm text-zinc-600">
                     <p>
-                      Short URL:{" "}
+                      Dynamic URL:{" "}
                       <Link className="underline" href={shortUrl} target="_blank">
                         {shortUrl}
                       </Link>
