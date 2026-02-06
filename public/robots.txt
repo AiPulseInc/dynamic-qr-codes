@@ -1,0 +1,7 @@
+# Block crawlers from QR redirect paths
+User-agent: *
+Disallow: /r/
+
+# Allow everything else
+User-agent: *
+Allow: /

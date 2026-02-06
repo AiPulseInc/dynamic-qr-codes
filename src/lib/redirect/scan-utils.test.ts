@@ -55,8 +55,14 @@ describe("isLikelyBot", () => {
     expect(isLikelyBot("Googlebot/2.1 (+http://www.google.com/bot.html)")).toBe(true);
   });
 
-  it("returns false for standard browser user agents", () => {
-    expect(isLikelyBot("Mozilla/5.0 (Macintosh; Intel Mac OS X) Safari/605.1.15")).toBe(false);
+  it("flags desktop browsers as bots (QR codes should be scanned by mobile)", () => {
+    expect(isLikelyBot("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Safari/605.1.15")).toBe(true);
+    expect(isLikelyBot("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0")).toBe(true);
+  });
+
+  it("returns false for mobile browser user agents", () => {
+    expect(isLikelyBot("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15")).toBe(false);
+    expect(isLikelyBot("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile")).toBe(false);
   });
 });
 

@@ -9,6 +9,44 @@ const BOT_PATTERNS = [
   /preview/i,
   /facebookexternalhit/i,
   /whatsapp/i,
+  /curl/i,
+  /wget/i,
+  /python/i,
+  /go-http/i,
+  /java\//i,
+  /libwww/i,
+  /httpunit/i,
+  /nutch/i,
+  /phpcrawl/i,
+  /msnbot/i,
+  /adidxbot/i,
+  /blekkobot/i,
+  /teoma/i,
+  /gigabot/i,
+  /dotbot/i,
+  /yandex/i,
+  /baiduspider/i,
+];
+
+// Desktop OS patterns - QR codes should be scanned by mobile devices
+const DESKTOP_OS_PATTERNS = [
+  /Windows NT/i,
+  /Macintosh.*Mac OS X/i,
+  /Linux(?!.*Android)/i,  // Linux but not Android
+  /X11/i,
+  /CrOS/i,  // ChromeOS
+];
+
+// Mobile device patterns - legitimate QR scanners
+const MOBILE_PATTERNS = [
+  /iPhone/i,
+  /iPad/i,
+  /Android/i,
+  /Mobile/i,
+  /webOS/i,
+  /BlackBerry/i,
+  /Opera Mini/i,
+  /IEMobile/i,
 ];
 
 function takeFirstCsvValue(rawValue: string | null): string | null {
@@ -57,7 +95,24 @@ export function isLikelyBot(userAgent: string | null): boolean {
     return false;
   }
 
-  return BOT_PATTERNS.some((pattern) => pattern.test(userAgent));
+  // Check for known bot patterns
+  if (BOT_PATTERNS.some((pattern) => pattern.test(userAgent))) {
+    return true;
+  }
+
+  // Check if it's a mobile device (legitimate QR scan)
+  const isMobile = MOBILE_PATTERNS.some((pattern) => pattern.test(userAgent));
+  if (isMobile) {
+    return false;
+  }
+
+  // Desktop browsers are suspicious for QR scans
+  const isDesktop = DESKTOP_OS_PATTERNS.some((pattern) => pattern.test(userAgent));
+  if (isDesktop) {
+    return true;
+  }
+
+  return false;
 }
 
 export function extractGeo(headers: Headers): {
