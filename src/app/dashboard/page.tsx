@@ -127,22 +127,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </p>
         </div>
 
-        <div className="flex gap-3">
-          <Link
-            href={returnTo}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        <form action={signOut}>
+          <button
+            className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+            type="submit"
           >
-            Refresh
-          </Link>
-          <form action={signOut}>
-            <button
-              className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
-              type="submit"
-            >
-              Sign out
-            </button>
-          </form>
-        </div>
+            Sign out
+          </button>
+        </form>
       </header>
 
       {params.notice ? (
@@ -158,16 +150,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       ) : null}
 
       <section className="mt-8 rounded-xl border border-zinc-200 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-xl font-medium text-zinc-900">Analytics</h2>
-          <Link
-            className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
-            href={analyticsExportHref}
-            prefetch={false}
-          >
-            Export CSV
-          </Link>
-        </div>
+        <h2 className="text-xl font-medium text-zinc-900">Analytics</h2>
 
         <form className="mt-4 grid gap-3 md:grid-cols-5">
           <input name="q" type="hidden" value={search} />
@@ -221,12 +204,27 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </select>
           </label>
 
-          <button
-            className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100 md:col-start-5"
-            type="submit"
-          >
-            Apply analytics filters
-          </button>
+          <div className="flex flex-wrap gap-2 md:col-span-5">
+            <button
+              className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+              type="submit"
+            >
+              Apply filters
+            </button>
+            <Link
+              href={returnTo}
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              Refresh
+            </Link>
+            <Link
+              className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+              href={analyticsExportHref}
+              prefetch={false}
+            >
+              Export CSV
+            </Link>
+          </div>
         </form>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
