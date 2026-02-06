@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sprint Plan Builder"
+  short_description: "Creates phased plans with tests and checks."
+  default_prompt: "Create an incremental sprint plan with goals, tasks, measurable success criteria, and detailed test batches. Ensure each sprint is independently verifiable and include or update test-result.md."
