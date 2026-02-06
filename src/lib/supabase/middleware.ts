@@ -4,6 +4,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getServerEnv } from "@/lib/env/server";
 
 export async function updateSession(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/r/")) {
+    return NextResponse.next({
+      request,
+    });
+  }
+
   const env = getServerEnv();
 
   let response = NextResponse.next({
