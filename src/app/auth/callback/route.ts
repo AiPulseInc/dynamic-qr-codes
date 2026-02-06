@@ -17,7 +17,9 @@ export async function GET(request: Request) {
   const nextPath = safeNextPath(url.searchParams.get("next"));
   const env = getServerEnv();
 
-  const redirectUrl = new URL(nextPath, url.origin);
+  // Use APP_BASE_URL instead of url.origin to avoid Railway proxy issues
+  const baseUrl = env.APP_BASE_URL;
+  const redirectUrl = new URL(nextPath, baseUrl);
 
   if (code) {
     const response = NextResponse.redirect(redirectUrl);
@@ -44,7 +46,7 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      const errorUrl = new URL("/login", url.origin);
+      const errorUrl = new URL("/login", baseUrl);
       errorUrl.searchParams.set("error", error.message);
       return NextResponse.redirect(errorUrl);
     }
