@@ -46,6 +46,15 @@ export async function signOut() {
   redirect("/login");
 }
 
+function isRedirectError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    "digest" in error &&
+    typeof error.digest === "string" &&
+    error.digest.startsWith("NEXT_REDIRECT")
+  );
+}
+
 export async function createQrCode(formData: FormData) {
   const profile = await requireUserProfileOrRedirect();
   const returnTo = safeReturnTo(formData.get("returnTo")?.toString() ?? null);
@@ -62,6 +71,10 @@ export async function createQrCode(formData: FormData) {
     revalidatePath("/dashboard");
     redirectWithMessage(returnTo, "notice", "QR code created.");
   } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
     if (error instanceof z.ZodError) {
       redirectWithMessage(returnTo, "error", error.issues[0]?.message ?? "Invalid input.");
     }
@@ -91,6 +104,10 @@ export async function updateQrCode(formData: FormData) {
     revalidatePath("/dashboard");
     redirectWithMessage(returnTo, "notice", "QR code updated.");
   } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
     if (error instanceof z.ZodError) {
       redirectWithMessage(returnTo, "error", error.issues[0]?.message ?? "Invalid input.");
     }
@@ -113,6 +130,10 @@ export async function disableQrCode(formData: FormData) {
     revalidatePath("/dashboard");
     redirectWithMessage(returnTo, "notice", "QR code disabled.");
   } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
     if (error instanceof z.ZodError) {
       redirectWithMessage(returnTo, "error", error.issues[0]?.message ?? "Invalid request.");
     }
@@ -135,6 +156,10 @@ export async function enableQrCode(formData: FormData) {
     revalidatePath("/dashboard");
     redirectWithMessage(returnTo, "notice", "QR code enabled.");
   } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
     if (error instanceof z.ZodError) {
       redirectWithMessage(returnTo, "error", error.issues[0]?.message ?? "Invalid request.");
     }
