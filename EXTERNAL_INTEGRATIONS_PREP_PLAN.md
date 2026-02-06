@@ -29,11 +29,14 @@ Optional but strongly recommended:
   - `SUPABASE_SERVICE_ROLE_KEY` (server-only secret)
   - `SUPABASE_DB_URL` (or pooled connection string)
   - `SUPABASE_AUTH_JWT_SECRET` (if server-side JWT validation is implemented)
+  - Google OAuth credentials for Supabase provider setup:
+    - `GOOGLE_CLIENT_ID`
+    - `GOOGLE_CLIENT_SECRET`
 - Access required for implementation:
   - Project Admin or Owner (schema/migration management).
   - Ability to run SQL editor/migrations.
 - Configuration needed:
-  - Auth provider enabled (email/password minimum for MVP).
+  - Auth provider enabled (email/password + Google OAuth for MVP).
   - Auth URL settings configured (site URL and redirect URLs for dev/staging/prod).
   - Database backups enabled.
   - Network rules understood (if IP allowlist is used).
@@ -84,6 +87,8 @@ Optional but strongly recommended:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_DB_URL`
 - `SUPABASE_AUTH_JWT_SECRET` (if used by backend auth validation)
+- `GOOGLE_CLIENT_ID` (for Supabase provider config)
+- `GOOGLE_CLIENT_SECRET` (for Supabase provider config)
 - `RAILWAY_TOKEN` (if CLI automation used)
 - `SENTRY_DSN` (optional)
 - `UPSTASH_REDIS_REST_URL` (optional)
@@ -96,6 +101,7 @@ Tasks:
 - Confirm Supabase is source of truth for DB.
 - Confirm Railway hosts app runtime.
 - Confirm auth approach for MVP (`Supabase Auth`, email/password first).
+- Confirm Google OAuth enabled in Supabase Auth providers.
 - Confirm domain for QR redirect links.
 
 Success criteria:
@@ -125,6 +131,7 @@ Success criteria:
 Tasks:
 - Validate app can connect to Supabase DB from Railway runtime.
 - Validate auth sign-up/sign-in/sign-out and protected route behavior.
+- Validate Google OAuth login callback and redirect URL behavior.
 - Validate health endpoint and DB check endpoint.
 - Validate domain resolves to app and HTTPS certificate is active.
 
@@ -146,8 +153,8 @@ Success criteria:
   - Railway for hosting: `Yes/No`
   - Custom short-link domain: `<domain>`
 - Confirm MVP auth settings:
-  - Auth method: `Email/Password` (recommended for MVP)
-  - Social login now: `Yes/No`
+  - Auth method: `Email/Password + Google OAuth`
+  - Social login now: `Yes` (confirmed)
 - Provide secure access (not passwords in chat):
   - Invite me/service account to Supabase and Railway with required roles.
   - Add required tokens/secrets to environment managers.

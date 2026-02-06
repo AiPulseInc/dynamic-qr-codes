@@ -7,6 +7,7 @@
 - Team size: 1-2 developers.
 - Delivery style: incremental sprints where each sprint leaves a working, deployable state.
 - Baseline stack: Next.js (frontend + API routes), PostgreSQL via Supabase, Prisma ORM, Railway deploy.
+- Package manager: `npm` (default, easiest onboarding, broad docs/ecosystem support).
 - Billing and advanced organization/team plans are out of MVP scope.
 
 ## Sprint roadmap summary
@@ -24,20 +25,21 @@ Establish project baseline with working authentication and user-owned data model
 
 Scope:
 - Next.js project setup and quality gates.
-- Supabase Auth integration (email/password for MVP).
+- Supabase Auth integration (email/password + Google OAuth via Supabase provider template).
 - Initial schema with user ownership relations.
 
 Tasks:
 - [ ] Initialize Next.js app with TypeScript, ESLint, Prettier, and strict TS config.
 - [ ] Configure Supabase project and connect auth client/server flows.
 - [ ] Implement sign-up, sign-in, sign-out, and session persistence.
+- [ ] Configure Google OAuth provider in Supabase and connect provider sign-in flow.
 - [ ] Protect dashboard routes and redirect unauthenticated users.
 - [ ] Create Prisma schema/migration for `profiles`, `qr_codes`, and `scan_events` with `user_id` ownership.
 - [ ] Add `.env.example` and runtime env validation.
 - [ ] Add CI for lint, type-check, and tests.
 
 Success definition:
-- Auth flows (sign-up/sign-in/sign-out) work in local and staging.
+- Auth flows (email/password + Google sign-in/sign-out) work in local and staging.
 - Unauthenticated users cannot access dashboard routes.
 - Schema migration applies cleanly with ownership constraints.
 - `npm run lint`, `npm run typecheck`, and `npm test` pass.
@@ -45,7 +47,7 @@ Success definition:
 Test batch:
 - Unit: Validate auth session helpers and env parsing behavior.
 - Integration: Validate migration constraints for `user_id` ownership and profile linkage.
-- E2E: User can register/login and reach protected dashboard; logout revokes access.
+- E2E: User can login via email/password and Google provider, reach protected dashboard, and logout revokes access.
 - Regression: Re-run migrations from empty DB and verify deterministic schema state.
 - Non-functional: No high-severity dependency vulnerabilities and acceptable cold-start time.
 

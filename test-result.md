@@ -10,28 +10,29 @@ Append new sprint blocks in chronological order.
 - MVP requirement: Authorization enabled; each user can access only own QR codes and own scan logs.
 
 ## Sprint 1: Foundation, auth, and schema
-- Date:
+- Date: 2026-02-06
 - Status: `PARTIAL`
-- Summary: Planned. Awaiting sprint execution and test run.
+- Summary: Scaffold implemented and local route smoke checks passed for home/login/dashboard redirect. Supabase DB connectivity is blocked by invalid `SUPABASE_DB_URL` format (P1013 invalid port), so migration and DB health checks remain pending.
 
 ### Executed Tests
 | ID | Category | Test description | Expected | Actual | Result |
 | --- | --- | --- | --- | --- | --- |
-| T1 | Unit | Session/auth helper and env validation tests | Invalid states handled and valid sessions resolved | Not executed yet | PENDING |
-| T2 | Integration | Schema migration with `user_id` ownership constraints | Migration succeeds and FK constraints enforce ownership model | Not executed yet | PENDING |
-| T3 | E2E | Sign-up, sign-in, protected route access, sign-out | Auth flow works and protected routes blocked after logout | Not executed yet | PENDING |
-| T4 | Regression | Re-run migration after DB reset | Deterministic schema and auth-related tables intact | Not executed yet | PENDING |
-| T5 | Non-functional | CI quality checks | Lint/type-check/tests pass with no critical dependency issues | Not executed yet | PENDING |
+| T1 | Unit | Session/auth helper and env validation tests | Invalid states handled and valid sessions resolved | `vitest` env tests passed (2/2) | PASS |
+| T2 | Integration | Schema migration with `user_id` ownership constraints | Migration succeeds and FK constraints enforce ownership model | `prisma migrate deploy` failed with `P1013 invalid port number in database URL` | FAIL |
+| T3 | E2E | Email/password sign-up/sign-in and protected route access | Auth flow works and protected routes blocked after logout | `/dashboard` now returns `307` redirect to `/login`; full credential flow still pending | PARTIAL |
+| T4 | E2E | Google OAuth sign-in callback and session creation | User is redirected correctly and session is created | Callback route is implemented; provider flow not executed end-to-end yet | PARTIAL |
+| T5 | Regression | Re-run migration after DB reset | Deterministic schema and auth-related tables intact | Blocked until `SUPABASE_DB_URL` format is corrected | BLOCKED |
+| T6 | Non-functional | CI quality checks | Lint/type-check/tests pass with no critical dependency issues | `npm run lint`, `npm run typecheck`, `npm run test` passed locally | PASS |
 
 ### Issues and Fixes
 | Issue ID | Description | Severity | Fix plan | Retest result | Status |
 | --- | --- | --- | --- | --- | --- |
-| I1 | No execution data yet | Low | Run sprint tests at completion and update this table | PENDING | Open |
+| I1 | `SUPABASE_DB_URL` is malformed for Prisma (`P1013 invalid port number`), causing migration and DB health check failures | High | Regenerate/copy Supabase Postgres URI (Prisma-compatible, URL-encoded password), update `.env`, rerun `prisma migrate deploy` and `/api/health/db` | PENDING | Open |
 
 ### Sign-off
 - Reviewer:
 - Decision: `Needs rework`
-- Notes: Update after sprint completion.
+- Notes: Code baseline is ready; final Sprint 1 sign-off requires valid DB URL and successful Supabase migration + auth provider E2E.
 
 ## Sprint 2: Dynamic redirect and scan capture
 - Date:
