@@ -171,7 +171,7 @@ export const translations = {
       button: "Get Started — It's Free",
     },
     footer: {
-      rights: "All rights reserved.",
+      rights: "powered by AiPulse Public beta v. 0.90",
     },
     auth: {
       welcomeTitle: "Welcome to DynamicQR",
@@ -409,7 +409,7 @@ export const translations = {
       button: "Zacznij za darmo",
     },
     footer: {
-      rights: "Wszelkie prawa zastrzeżone.",
+      rights: "powered by AiPulse Public beta v. 0.90",
     },
     auth: {
       welcomeTitle: "Witaj w DynamicQR",

@@ -17,7 +17,7 @@ const LanguageContext = createContext<LanguageContextValue>({
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
+  const [locale, setLocaleState] = useState<Locale>("pl");
 
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale);
