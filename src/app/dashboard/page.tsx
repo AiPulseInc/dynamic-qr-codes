@@ -204,13 +204,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </select>
           </label>
 
-          <div className="flex flex-wrap gap-2 md:col-span-5">
-            <button
-              className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
-              type="submit"
-            >
-              Apply filters
-            </button>
+          <div className="flex flex-wrap justify-end gap-2 md:col-span-5">
             <Link
               href={returnTo}
               className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
@@ -224,6 +218,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             >
               Export CSV
             </Link>
+            <button
+              className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+              type="submit"
+            >
+              Apply filters
+            </button>
           </div>
         </form>
 
