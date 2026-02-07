@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 
 import { useLanguage } from "@/app/i18n/LanguageContext";
 import {
@@ -90,7 +91,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
     }
   }
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] overflow-y-auto">
       <div className="flex min-h-full items-end justify-center p-4 pb-20 sm:items-center sm:pb-4">
       {/* Backdrop */}
@@ -274,6 +275,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
         </div>
       </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
