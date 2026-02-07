@@ -53,6 +53,15 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
 
   if (!isOpen) return null;
 
+  function isRedirectError(error: unknown): boolean {
+    return (
+      error instanceof Error &&
+      "digest" in error &&
+      typeof error.digest === "string" &&
+      error.digest.startsWith("NEXT_REDIRECT")
+    );
+  }
+
   async function handleEmailSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
@@ -62,7 +71,8 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
       } else {
         await signUpWithPassword(formData);
       }
-    } catch {
+    } catch (err) {
+      if (isRedirectError(err)) throw err;
       setError(t.auth.errorGeneric);
       setLoading(false);
     }
@@ -73,7 +83,8 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
     setError(null);
     try {
       await signInWithGoogle(formData);
-    } catch {
+    } catch (err) {
+      if (isRedirectError(err)) throw err;
       setError(t.auth.errorGoogle);
       setLoading(false);
     }

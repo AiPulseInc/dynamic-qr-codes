@@ -16,7 +16,7 @@ function safeNextPath(rawNext: string | null): string {
 function toErrorPath(message: string, nextPath: string) {
   const encodedError = encodeURIComponent(message);
   const encodedNext = encodeURIComponent(nextPath);
-  return `/login?error=${encodedError}&next=${encodedNext}`;
+  return `/?auth=signin&error=${encodedError}&next=${encodedNext}`;
 }
 
 export async function signInWithPassword(formData: FormData) {
@@ -57,7 +57,7 @@ export async function signUpWithPassword(formData: FormData) {
   }
 
   const encodedMessage = encodeURIComponent("Account created. Verify your email, then sign in.");
-  redirect(`/login?message=${encodedMessage}&next=${encodeURIComponent(nextPath)}`);
+  redirect(`/?auth=signin&message=${encodedMessage}&next=${encodeURIComponent(nextPath)}`);
 }
 
 export async function signInWithGoogle(formData: FormData) {

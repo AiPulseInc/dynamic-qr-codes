@@ -30,7 +30,7 @@ async function requireUserProfileOrRedirect() {
   const profile = await getAuthenticatedProfile();
 
   if (!profile) {
-    redirect("/login");
+    redirect("/?auth=signin&next=/dashboard");
   }
 
   return profile;
@@ -39,7 +39,7 @@ async function requireUserProfileOrRedirect() {
 export async function signOut() {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
-  redirect("/login");
+  redirect("/");
 }
 
 function isRedirectError(error: unknown): boolean {

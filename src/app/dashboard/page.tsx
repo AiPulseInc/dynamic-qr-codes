@@ -95,7 +95,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const profile = await getAuthenticatedProfile();
 
   if (!profile) {
-    redirect("/login");
+    redirect("/?auth=signin&next=/dashboard");
   }
 
   const activeTab = parseTab(params.tab);

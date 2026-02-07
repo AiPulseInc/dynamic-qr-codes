@@ -46,7 +46,8 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      const errorUrl = new URL("/login", baseUrl);
+      const errorUrl = new URL("/", baseUrl);
+      errorUrl.searchParams.set("auth", "signin");
       errorUrl.searchParams.set("error", error.message);
       return NextResponse.redirect(errorUrl);
     }

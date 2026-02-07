@@ -347,7 +347,7 @@ export default function LandingContent({ isAuthenticated, authAction, authNext }
                   </ul>
 
                   <a
-                    href="/login"
+                    href="/?auth=signup"
                     className={`mt-8 block cursor-pointer rounded-lg px-6 py-3 text-center text-sm font-semibold transition-all duration-200 ${
                       highlighted
                         ? "bg-gradient-to-r from-primary to-primary-light text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40"
@@ -394,7 +394,7 @@ export default function LandingContent({ isAuthenticated, authAction, authNext }
           <div className="flex gap-6">
             <a href="#features" className="cursor-pointer text-xs text-text-muted transition-colors duration-200 hover:text-primary">{t.nav.features}</a>
             <a href="#pricing" className="cursor-pointer text-xs text-text-muted transition-colors duration-200 hover:text-primary">{t.nav.pricing}</a>
-            <a href="/login" className="cursor-pointer text-xs text-text-muted transition-colors duration-200 hover:text-primary">{t.nav.signIn}</a>
+            <a href="/?auth=signin" className="cursor-pointer text-xs text-text-muted transition-colors duration-200 hover:text-primary">{t.nav.signIn}</a>
           </div>
         </div>
       </footer>
