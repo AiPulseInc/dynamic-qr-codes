@@ -25,10 +25,10 @@ type DashboardPageProps = {
 };
 
 function parseTab(tab: string | undefined): "analytics" | "qr" {
-  if (tab === "analytics") {
-    return "analytics";
+  if (tab === "qr") {
+    return "qr";
   }
-  return "qr";
+  return "analytics";
 }
 
 function buildReturnToPath(
@@ -149,18 +149,18 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col px-6 py-12">
+    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col px-4 py-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-zinc-900">Dashboard</h1>
-          <p className="mt-1 text-sm text-zinc-600">
+          <h1 className="text-2xl font-semibold text-zinc-900">Dashboard</h1>
+          <p className="text-sm text-zinc-600">
             Signed in as <span className="font-medium">{profile.email}</span>
           </p>
         </div>
 
         <form action={signOut}>
           <button
-            className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+            className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
             type="submit"
           >
             Sign out
@@ -169,18 +169,18 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       </header>
 
       {params.notice ? (
-        <p className="mt-6 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+        <p className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm text-emerald-700">
           {params.notice}
         </p>
       ) : null}
 
       {params.error ? (
-        <p className="mt-6 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-sm text-red-700">
           {params.error}
         </p>
       ) : null}
 
-      <nav className="mt-8 flex gap-1 border-b border-zinc-200">
+      <nav className="mt-4 flex gap-1 border-b border-zinc-200">
         <Link
           href={buildTabHref("qr", tabParams)}
           className={`px-4 py-2 text-sm font-medium ${
@@ -204,10 +204,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       </nav>
 
       {activeTab === "analytics" ? (
-        <section className="mt-8 rounded-xl border border-zinc-200 p-6">
-          <h2 className="text-xl font-medium text-zinc-900">Analytics</h2>
+        <section className="mt-4 rounded-lg border border-zinc-200 p-4">
+          <h2 className="text-lg font-medium text-zinc-900">Analytics</h2>
 
-          <form className="mt-4 grid gap-3 md:grid-cols-5">
+          <form className="mt-3 grid gap-2 md:grid-cols-5">
             <input name="tab" type="hidden" value="analytics" />
             <input name="q" type="hidden" value={search} />
             <input name="status" type="hidden" value={status} />
@@ -263,19 +263,19 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <div className="flex flex-wrap justify-end gap-2 md:col-span-5">
               <Link
                 href={returnTo}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
               >
                 Refresh
               </Link>
               <Link
-                className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
                 href={analyticsExportHref}
                 prefetch={false}
               >
                 Export CSV
               </Link>
               <button
-                className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
                 type="submit"
               >
                 Apply filters
@@ -283,43 +283,43 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </div>
           </form>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <article className="rounded-lg border border-zinc-200 p-3">
+          <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            <article className="rounded-md border border-zinc-200 p-2">
               <p className="text-xs uppercase tracking-wide text-zinc-500">Total scans</p>
-              <p className="mt-1 text-2xl font-semibold text-zinc-900">{analytics.kpis.totalScans}</p>
+              <p className="text-xl font-semibold text-zinc-900">{analytics.kpis.totalScans}</p>
             </article>
-            <article className="rounded-lg border border-zinc-200 p-3">
+            <article className="rounded-md border border-zinc-200 p-2">
               <p className="text-xs uppercase tracking-wide text-zinc-500">Unique scans</p>
-              <p className="mt-1 text-2xl font-semibold text-zinc-900">{analytics.kpis.uniqueScans}</p>
+              <p className="text-xl font-semibold text-zinc-900">{analytics.kpis.uniqueScans}</p>
             </article>
-            <article className="rounded-lg border border-zinc-200 p-3">
+            <article className="rounded-md border border-zinc-200 p-2">
               <p className="text-xs uppercase tracking-wide text-zinc-500">Active QR codes</p>
-              <p className="mt-1 text-2xl font-semibold text-zinc-900">{analytics.kpis.activeQrCodes}</p>
+              <p className="text-xl font-semibold text-zinc-900">{analytics.kpis.activeQrCodes}</p>
             </article>
-            <article className="rounded-lg border border-zinc-200 p-3">
+            <article className="rounded-md border border-zinc-200 p-2">
               <p className="text-xs uppercase tracking-wide text-zinc-500">Scans (24h)</p>
-              <p className="mt-1 text-2xl font-semibold text-zinc-900">
+              <p className="text-xl font-semibold text-zinc-900">
                 {analytics.kpis.scansLast24Hours}
               </p>
             </article>
           </div>
 
-          <div className="mt-6 grid gap-4 lg:grid-cols-2">
-            <article className="rounded-lg border border-zinc-200 p-3">
+          <div className="mt-3 grid gap-3 lg:grid-cols-2">
+            <article className="rounded-md border border-zinc-200 p-2">
               <h3 className="text-sm font-semibold text-zinc-900">Daily scans</h3>
-              <div className="mt-2 max-h-64 overflow-auto rounded border border-zinc-200">
+              <div className="mt-1 rounded border border-zinc-200">
                 <table className="w-full border-collapse text-sm">
                   <thead className="bg-zinc-50 text-left text-zinc-600">
                     <tr>
-                      <th className="px-3 py-2 font-medium">Day</th>
-                      <th className="px-3 py-2 font-medium">Scans</th>
+                      <th className="px-2 py-1 font-medium">Day</th>
+                      <th className="px-2 py-1 font-medium">Scans</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {[...analytics.dailySeries].reverse().map((point) => (
+                    {[...analytics.dailySeries].reverse().slice(0, 5).map((point) => (
                       <tr key={point.day} className="border-t border-zinc-100">
-                        <td className="px-3 py-2 text-zinc-700">{point.day}</td>
-                        <td className="px-3 py-2 text-zinc-900">{point.scans}</td>
+                        <td className="px-2 py-1 text-zinc-700">{point.day}</td>
+                        <td className="px-2 py-1 text-zinc-900">{point.scans}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -327,30 +327,30 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
             </article>
 
-            <article className="rounded-lg border border-zinc-200 p-3">
+            <article className="rounded-md border border-zinc-200 p-2">
               <h3 className="text-sm font-semibold text-zinc-900">Top QR codes</h3>
-              <div className="mt-2 max-h-64 overflow-auto rounded border border-zinc-200">
+              <div className="mt-1 rounded border border-zinc-200">
                 <table className="w-full border-collapse text-sm">
                   <thead className="bg-zinc-50 text-left text-zinc-600">
                     <tr>
-                      <th className="px-3 py-2 font-medium">Name</th>
-                      <th className="px-3 py-2 font-medium">Slug</th>
-                      <th className="px-3 py-2 font-medium">Scans</th>
+                      <th className="px-2 py-1 font-medium">Name</th>
+                      <th className="px-2 py-1 font-medium">Slug</th>
+                      <th className="px-2 py-1 font-medium">Scans</th>
                     </tr>
                   </thead>
                   <tbody>
                     {analytics.topQrCodes.length === 0 ? (
                       <tr>
-                        <td className="px-3 py-2 text-zinc-600" colSpan={3}>
+                        <td className="px-2 py-1 text-zinc-600" colSpan={3}>
                           No scan data in selected range.
                         </td>
                       </tr>
                     ) : (
                       analytics.topQrCodes.map((row) => (
                         <tr key={row.qrCodeId} className="border-t border-zinc-100">
-                          <td className="px-3 py-2 text-zinc-700">{row.name}</td>
-                          <td className="px-3 py-2 text-zinc-700">{row.slug}</td>
-                          <td className="px-3 py-2 text-zinc-900">{row.scans}</td>
+                          <td className="px-2 py-1 text-zinc-700">{row.name}</td>
+                          <td className="px-2 py-1 text-zinc-700">{row.slug}</td>
+                          <td className="px-2 py-1 text-zinc-900">{row.scans}</td>
                         </tr>
                       ))
                     )}
@@ -362,15 +362,15 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </section>
       ) : (
         <>
-          <section className="mt-8 rounded-xl border border-zinc-200 p-6">
-            <h2 className="text-xl font-medium text-zinc-900">Create QR code</h2>
-            <form action={createQrCode} className="mt-4 grid gap-4 md:grid-cols-2">
+          <section className="mt-4 rounded-lg border border-zinc-200 p-4">
+            <h2 className="text-lg font-medium text-zinc-900">Create QR code</h2>
+            <form action={createQrCode} className="mt-3 grid gap-2 md:grid-cols-2">
               <input type="hidden" name="returnTo" value={returnTo} />
 
               <label className="text-sm text-zinc-700">
                 Name
                 <input
-                  className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm"
                   name="name"
                   placeholder="Main landing page"
                   required
@@ -381,7 +381,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <label className="text-sm text-zinc-700">
                 Slug
                 <input
-                  className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm"
                   name="slug"
                   placeholder="landing-page"
                   required
@@ -392,7 +392,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <label className="text-sm text-zinc-700 md:col-span-2">
                 Destination URL
                 <input
-                  className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm"
                   name="destinationUrl"
                   placeholder="https://example.com/landing"
                   required
@@ -406,7 +406,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </label>
 
               <button
-                className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700"
+                className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700"
                 type="submit"
               >
                 Create QR code
@@ -414,13 +414,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </form>
           </section>
 
-          <section className="mt-8 rounded-xl border border-zinc-200 p-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <h2 className="text-xl font-medium text-zinc-900">My QR codes</h2>
+          <section className="mt-4 rounded-lg border border-zinc-200 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-medium text-zinc-900">My QR codes</h2>
               <p className="text-sm text-zinc-500">{qrCodes.length} total</p>
             </div>
 
-            <form className="mt-4 grid gap-3 sm:grid-cols-[1fr_180px_auto]">
+            <form className="mt-3 grid gap-2 sm:grid-cols-[1fr_180px_auto]">
               <input name="tab" type="hidden" value="qr" />
               <input name="from" type="hidden" value={resolvedAnalyticsFilters.fromInput} />
               <input name="to" type="hidden" value={resolvedAnalyticsFilters.toInput} />
@@ -432,7 +432,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               />
 
               <input
-                className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
+                className="rounded-md border border-zinc-300 px-2 py-1.5 text-sm"
                 defaultValue={search}
                 name="q"
                 placeholder="Search by name, slug, or destination"
@@ -440,7 +440,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               />
 
               <select
-                className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
+                className="rounded-md border border-zinc-300 px-2 py-1.5 text-sm"
                 defaultValue={status}
                 name="status"
               >
@@ -450,7 +450,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </select>
 
               <button
-                className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+                className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
                 type="submit"
               >
                 Apply filters
@@ -458,19 +458,19 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </form>
 
             {qrCodes.length === 0 ? (
-              <p className="mt-6 text-sm text-zinc-600">
+              <p className="mt-3 text-sm text-zinc-600">
                 No QR codes yet. Create your first one above.
               </p>
             ) : (
-              <div className="mt-6 max-h-96 overflow-auto rounded border border-zinc-200">
+              <div className="mt-3 max-h-72 overflow-auto rounded border border-zinc-200">
                 <table className="w-full border-collapse text-sm">
                   <thead className="sticky top-0 bg-zinc-50 text-left text-zinc-600">
                     <tr>
-                      <th className="px-3 py-2 font-medium">Name</th>
-                      <th className="px-3 py-2 font-medium">Slug</th>
-                      <th className="px-3 py-2 font-medium">Created</th>
-                      <th className="px-3 py-2 font-medium">Status</th>
-                      <th className="px-3 py-2 font-medium">Actions</th>
+                      <th className="px-2 py-1 font-medium">Name</th>
+                      <th className="px-2 py-1 font-medium">Slug</th>
+                      <th className="px-2 py-1 font-medium">Created</th>
+                      <th className="px-2 py-1 font-medium">Status</th>
+                      <th className="px-2 py-1 font-medium">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
