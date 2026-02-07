@@ -29,27 +29,27 @@ export function QrListItem({ qrCode, returnTo, shortLinkBaseUrl }: QrListItemPro
   const downloadHref = `/api/qr/${encodeURIComponent(qrCode.slug)}?download=1`;
 
   return (
-    <tr className="border-t border-zinc-100">
-      <td className="px-2 py-1 text-zinc-900">{qrCode.name}</td>
-      <td className="px-2 py-1">
-        <code className="rounded bg-zinc-100 px-1 py-0.5 text-zinc-700">{qrCode.slug}</code>
+    <tr className="border-b border-border-subtle/50 last:border-0">
+      <td className="px-3 py-2.5 text-text-heading">{qrCode.name}</td>
+      <td className="px-3 py-2.5">
+        <span className="rounded bg-surface-card px-2 py-0.5 font-mono text-xs text-text-muted">{qrCode.slug}</span>
       </td>
-      <td className="px-2 py-1 text-zinc-600">{formatDate(qrCode.createdAt)}</td>
-      <td className="px-2 py-1">
+      <td className="px-3 py-2.5 text-text-muted">{formatDate(qrCode.createdAt)}</td>
+      <td className="px-3 py-2.5">
         <span
-          className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+          className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
             qrCode.isActive
-              ? "bg-emerald-100 text-emerald-800"
-              : "bg-zinc-200 text-zinc-700"
+              ? "bg-primary/15 text-primary-light"
+              : "bg-border-subtle text-text-muted"
           }`}
         >
           {qrCode.isActive ? "Active" : "Inactive"}
         </span>
       </td>
-      <td className="px-2 py-1">
-        <div className="flex items-center gap-1">
+      <td className="px-3 py-2.5">
+        <div className="flex items-center gap-1.5">
           <Link
-            className="rounded-md border border-zinc-300 px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-100"
+            className="rounded border border-border-card bg-surface-card px-2.5 py-1 text-xs text-text-heading transition-colors duration-200 hover:border-primary hover:text-primary"
             href={downloadHref}
             prefetch={false}
           >

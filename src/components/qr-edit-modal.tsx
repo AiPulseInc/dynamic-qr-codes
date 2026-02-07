@@ -47,7 +47,7 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
       <button
         type="button"
         onClick={openModal}
-        className="rounded-md border border-zinc-300 px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-100"
+        className="rounded border border-border-card bg-surface-card px-2.5 py-1 text-xs text-text-heading transition-colors duration-200 hover:border-primary hover:text-primary"
       >
         Edit
       </button>
@@ -55,16 +55,16 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
       <dialog
         ref={dialogRef}
         onClick={handleBackdropClick}
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-lg border border-zinc-200 p-0 backdrop:bg-black/50"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-2xl border border-border-card bg-surface-elevated p-0 shadow-2xl shadow-primary/20 backdrop:bg-black/60 backdrop:backdrop-blur-sm"
       >
         {isOpen && (
-          <div className="p-4">
+          <div className="p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-medium text-zinc-900">Edit QR Code</h2>
+              <h2 className="text-lg font-semibold text-text-heading">Edit QR Code</h2>
               <button
                 type="button"
                 onClick={closeModal}
-                className="text-zinc-500 hover:text-zinc-700"
+                className="rounded-lg p-1.5 text-text-muted transition-colors duration-200 hover:bg-surface-card hover:text-text-heading"
               >
                 <span className="sr-only">Close</span>
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,23 +73,23 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
               </button>
             </div>
 
-            <div className="mt-2 text-sm text-zinc-600">
+            <div className="mt-2 text-sm text-text-muted">
               <p>
                 Dynamic URL:{" "}
-                <Link className="underline" href={shortUrl} target="_blank">
+                <Link className="text-primary-light underline transition-colors duration-200 hover:text-primary" href={shortUrl} target="_blank">
                   {shortUrl}
                 </Link>
               </p>
             </div>
 
-            <form action={updateQrCode} className="mt-3 grid gap-2">
+            <form action={updateQrCode} className="mt-4 grid gap-3">
               <input name="qrCodeId" type="hidden" value={qrCode.id} />
               <input name="returnTo" type="hidden" value={returnTo} />
 
-              <label className="text-sm text-zinc-700">
+              <label className="text-sm text-text-muted">
                 Name
                 <input
-                  className="mt-1 w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm"
+                  className="mt-1 w-full rounded-lg border border-border-card bg-surface-card px-3 py-2 text-sm text-text-heading transition-colors duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   defaultValue={qrCode.name}
                   name="name"
                   required
@@ -97,10 +97,10 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
                 />
               </label>
 
-              <label className="text-sm text-zinc-700">
+              <label className="text-sm text-text-muted">
                 Slug
                 <input
-                  className="mt-1 w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm"
+                  className="mt-1 w-full rounded-lg border border-border-card bg-surface-card px-3 py-2 text-sm text-text-heading transition-colors duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   defaultValue={qrCode.slug}
                   name="slug"
                   required
@@ -108,10 +108,10 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
                 />
               </label>
 
-              <label className="text-sm text-zinc-700">
+              <label className="text-sm text-text-muted">
                 Destination URL
                 <input
-                  className="mt-1 w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm"
+                  className="mt-1 w-full rounded-lg border border-border-card bg-surface-card px-3 py-2 text-sm text-text-heading transition-colors duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   defaultValue={qrCode.destinationUrl}
                   name="destinationUrl"
                   required
@@ -119,18 +119,19 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
                 />
               </label>
 
-              <label className="flex items-center gap-2 text-sm text-zinc-700">
+              <label className="flex items-center gap-2 text-sm text-text-heading">
                 <input
                   defaultChecked={qrCode.isActive}
                   name="isActive"
                   type="checkbox"
                   value="true"
+                  className="accent-primary"
                 />
                 Active
               </label>
 
               <button
-                className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700"
+                className="rounded-lg bg-gradient-to-r from-primary to-primary-light px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/40"
                 type="submit"
               >
                 Save changes

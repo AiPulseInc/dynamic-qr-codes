@@ -41,3 +41,10 @@ next-env.d.ts
 
 # local scaffold directory
 /app
+
+# antigravity kit
+/.agent/
+
+# windsurf / ui installer
+/.shared/
+/.windsurf/

@@ -46,7 +46,9 @@ export async function updateSession(request: NextRequest) {
 
   if (!user && request.nextUrl.pathname.startsWith("/dashboard")) {
     const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/login";
+    redirectUrl.pathname = "/";
+    redirectUrl.search = "";
+    redirectUrl.searchParams.set("auth", "signin");
     redirectUrl.searchParams.set("next", request.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
   }
@@ -55,6 +57,16 @@ export async function updateSession(request: NextRequest) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/dashboard";
     redirectUrl.search = "";
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  if (!user && request.nextUrl.pathname === "/login") {
+    const redirectUrl = request.nextUrl.clone();
+    const nextParam = request.nextUrl.searchParams.get("next") || "/dashboard";
+    redirectUrl.pathname = "/";
+    redirectUrl.search = "";
+    redirectUrl.searchParams.set("auth", "signin");
+    redirectUrl.searchParams.set("next", nextParam);
     return NextResponse.redirect(redirectUrl);
   }
 
