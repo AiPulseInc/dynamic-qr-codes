@@ -11,11 +11,11 @@ export async function GET() {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
+    console.error("Health check DB error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
       {
         status: "error",
         database: "unreachable",
-        message: error instanceof Error ? error.message : "Unknown database error",
       },
       { status: 500 },
     );

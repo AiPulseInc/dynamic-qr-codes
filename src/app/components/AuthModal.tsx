@@ -91,16 +91,16 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto p-4 pt-12 sm:items-center sm:pt-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md animate-fade-in-up rounded-2xl border border-border-card bg-surface-card shadow-2xl shadow-primary/20">
+      <div className="relative my-auto w-full max-w-md animate-fade-in-up rounded-2xl border border-border-card bg-surface-card shadow-2xl shadow-primary/20">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -110,7 +110,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
           <IconX className="h-5 w-5" />
         </button>
 
-        <div className="p-8">
+        <div className="p-6 sm:p-8">
           {/* Header */}
           <div className="text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15">
