@@ -22,7 +22,7 @@ export default async function HomePage() {
       </div>
 
       <header>
-        <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">MVP v. 1.2</p>
+        <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">MVP v. 1.3</p>
         <h1 className="mt-3 text-4xl font-semibold text-zinc-900">Dynamic QR Codes Platform</h1>
         <p className="mt-4 max-w-2xl text-base text-zinc-600">
           Create and manage dynamic QR codes with editable destination URLs and real-time scan analytics.
