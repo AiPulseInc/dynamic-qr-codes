@@ -5,12 +5,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getAuthenticatedProfile } from "@/lib/auth/user";
-import { QrDuplicateSlugError, QrOwnershipError, QrValidationError } from "@/lib/qr/service";
-import {
-  createOwnedQrCode,
-  setOwnedQrCodeStatus,
-  updateOwnedQrCode,
-} from "@/lib/qr/service";
+import { QrDuplicateSlugError, QrOwnershipError } from "@/lib/qr/service";
+import { createOwnedQrCode, updateOwnedQrCode } from "@/lib/qr/service";
 import { parseQrCodeFormInput } from "@/lib/qr/validation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -117,57 +113,5 @@ export async function updateQrCode(formData: FormData) {
     }
 
     redirectWithMessage(returnTo, "error", "Unable to update QR code.");
-  }
-}
-
-export async function disableQrCode(formData: FormData) {
-  const profile = await requireUserProfileOrRedirect();
-  const returnTo = safeReturnTo(formData.get("returnTo")?.toString() ?? null);
-
-  try {
-    const qrCodeId = qrCodeIdSchema.parse(formData.get("qrCodeId")?.toString());
-    await setOwnedQrCodeStatus(profile.id, qrCodeId, false);
-    revalidatePath("/dashboard");
-    redirectWithMessage(returnTo, "notice", "QR code disabled.");
-  } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-
-    if (error instanceof z.ZodError) {
-      redirectWithMessage(returnTo, "error", error.issues[0]?.message ?? "Invalid request.");
-    }
-
-    if (error instanceof QrOwnershipError || error instanceof QrValidationError) {
-      redirectWithMessage(returnTo, "error", error.message);
-    }
-
-    redirectWithMessage(returnTo, "error", "Unable to disable QR code.");
-  }
-}
-
-export async function enableQrCode(formData: FormData) {
-  const profile = await requireUserProfileOrRedirect();
-  const returnTo = safeReturnTo(formData.get("returnTo")?.toString() ?? null);
-
-  try {
-    const qrCodeId = qrCodeIdSchema.parse(formData.get("qrCodeId")?.toString());
-    await setOwnedQrCodeStatus(profile.id, qrCodeId, true);
-    revalidatePath("/dashboard");
-    redirectWithMessage(returnTo, "notice", "QR code enabled.");
-  } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-
-    if (error instanceof z.ZodError) {
-      redirectWithMessage(returnTo, "error", error.issues[0]?.message ?? "Invalid request.");
-    }
-
-    if (error instanceof QrOwnershipError || error instanceof QrValidationError) {
-      redirectWithMessage(returnTo, "error", error.message);
-    }
-
-    redirectWithMessage(returnTo, "error", "Unable to enable QR code.");
   }
 }

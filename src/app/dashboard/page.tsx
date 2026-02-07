@@ -182,16 +182,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       <nav className="mt-4 flex gap-1 border-b border-zinc-200">
         <Link
-          href={buildTabHref("qr", tabParams)}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === "qr"
-              ? "border-b-2 border-zinc-900 text-zinc-900"
-              : "text-zinc-600 hover:text-zinc-900"
-          }`}
-        >
-          QR Codes
-        </Link>
-        <Link
           href={buildTabHref("analytics", tabParams)}
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === "analytics"
@@ -200,6 +190,16 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           }`}
         >
           Analytics
+        </Link>
+        <Link
+          href={buildTabHref("qr", tabParams)}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === "qr"
+              ? "border-b-2 border-zinc-900 text-zinc-900"
+              : "text-zinc-600 hover:text-zinc-900"
+          }`}
+        >
+          QR Codes
         </Link>
       </nav>
 

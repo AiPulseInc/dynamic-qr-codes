@@ -3,11 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 
-import {
-  disableQrCode,
-  enableQrCode,
-  updateQrCode,
-} from "@/app/dashboard/actions";
+import { updateQrCode } from "@/app/dashboard/actions";
 
 type QrCode = {
   id: string;
@@ -140,32 +136,6 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
                 Save changes
               </button>
             </form>
-
-            <div className="mt-3 border-t border-zinc-200 pt-3">
-              {qrCode.isActive ? (
-                <form action={disableQrCode}>
-                  <input name="qrCodeId" type="hidden" value={qrCode.id} />
-                  <input name="returnTo" type="hidden" value={returnTo} />
-                  <button
-                    className="rounded-md border border-zinc-300 px-3 py-1 text-sm text-zinc-700 hover:bg-zinc-100"
-                    type="submit"
-                  >
-                    Disable
-                  </button>
-                </form>
-              ) : (
-                <form action={enableQrCode}>
-                  <input name="qrCodeId" type="hidden" value={qrCode.id} />
-                  <input name="returnTo" type="hidden" value={returnTo} />
-                  <button
-                    className="rounded-md border border-zinc-300 px-3 py-1 text-sm text-zinc-700 hover:bg-zinc-100"
-                    type="submit"
-                  >
-                    Enable
-                  </button>
-                </form>
-              )}
-            </div>
           </div>
         )}
       </dialog>
