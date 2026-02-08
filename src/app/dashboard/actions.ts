@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getAuthenticatedProfile } from "@/lib/auth/user";
+import { isRedirectError } from "@/lib/next/redirect";
 import { QrDuplicateSlugError, QrOwnershipError } from "@/lib/qr/service";
 import { createOwnedQrCode, updateOwnedQrCode } from "@/lib/qr/service";
 import { parseQrCodeFormInput } from "@/lib/qr/validation";
@@ -40,15 +41,6 @@ export async function signOut() {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
   redirect("/");
-}
-
-function isRedirectError(error: unknown): boolean {
-  return (
-    error instanceof Error &&
-    "digest" in error &&
-    typeof error.digest === "string" &&
-    error.digest.startsWith("NEXT_REDIRECT")
-  );
 }
 
 export async function createQrCode(formData: FormData) {

@@ -8,6 +8,7 @@ import {
   signInWithPassword,
   signUpWithPassword,
 } from "@/app/login/actions";
+import { isRedirectError } from "@/lib/next/redirect";
 
 function IconX({ className = "h-5 w-5" }: { className?: string }) {
   return (
@@ -52,15 +53,6 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
   const { t } = useLanguage();
 
   if (!isOpen) return null;
-
-  function isRedirectError(error: unknown): boolean {
-    return (
-      error instanceof Error &&
-      "digest" in error &&
-      typeof error.digest === "string" &&
-      error.digest.startsWith("NEXT_REDIRECT")
-    );
-  }
 
   async function handleEmailSubmit(formData: FormData) {
     setLoading(true);

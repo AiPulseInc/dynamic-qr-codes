@@ -3,18 +3,10 @@
 import Link from "next/link";
 
 import { QrEditModal } from "@/components/qr-edit-modal";
-
-type QrCode = {
-  id: string;
-  name: string;
-  slug: string;
-  destinationUrl: string;
-  isActive: boolean;
-  createdAt: Date;
-};
+import type { QrCodeListItem } from "@/lib/qr/types";
 
 type QrListItemProps = {
-  qrCode: QrCode;
+  qrCode: QrCodeListItem;
   returnTo: string;
   shortLinkBaseUrl: string;
 };

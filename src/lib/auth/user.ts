@@ -27,6 +27,19 @@ export async function getAuthenticatedProfile() {
     return null;
   }
 
+  const profile = await prisma.profile.findUnique({
+    where: { id: user.id },
+    select: { id: true, email: true },
+  });
+
+  if (profile) {
+    return profile;
+  }
+
+  return ensureProfile(user);
+}
+
+export async function ensureProfile(user: User) {
   const email = user.email ?? fallbackEmail(user);
 
   const profile = await prisma.profile.upsert({

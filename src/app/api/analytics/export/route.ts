@@ -8,6 +8,7 @@ import { createRequestLogContext, logError, logInfo, logWarn } from "@/lib/obser
 import { extractClientIp } from "@/lib/redirect/scan-utils";
 import { QrOwnershipError } from "@/lib/qr/service";
 import { consumeRateLimit } from "@/lib/security/rate-limit";
+import { toUnauthorizedResponse } from "@/lib/security/responses";
 
 export async function GET(request: Request) {
   const logContext = createRequestLogContext({
@@ -40,7 +41,7 @@ export async function GET(request: Request) {
   const profile = await getAuthenticatedProfile();
 
   if (!profile) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return toUnauthorizedResponse();
   }
 
   try {

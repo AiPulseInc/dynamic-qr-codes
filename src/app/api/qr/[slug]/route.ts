@@ -5,10 +5,7 @@ import { getAuthenticatedProfile } from "@/lib/auth/user";
 import { getServerEnv } from "@/lib/env/server";
 import { getOwnedQrCodeBySlug, QrOwnershipError } from "@/lib/qr/service";
 import { normalizeSlug } from "@/lib/redirect/scan-utils";
-
-function toUnauthorizedResponse() {
-  return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-}
+import { toUnauthorizedResponse } from "@/lib/security/responses";
 
 export async function GET(
   request: Request,

@@ -4,18 +4,10 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 
 import { updateQrCode } from "@/app/dashboard/actions";
-
-type QrCode = {
-  id: string;
-  name: string;
-  slug: string;
-  destinationUrl: string;
-  isActive: boolean;
-  createdAt: Date;
-};
+import type { QrCodeListItem } from "@/lib/qr/types";
 
 type QrEditModalProps = {
-  qrCode: QrCode;
+  qrCode: QrCodeListItem;
   returnTo: string;
   shortLinkBaseUrl: string;
 };

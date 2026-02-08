@@ -10,35 +10,13 @@ import {
   setOwnedQrCodeStatus,
   updateOwnedQrCode,
 } from "@/lib/qr/service";
+import { toQrJson } from "@/lib/qr/types";
+import { toUnauthorizedResponse } from "@/lib/security/responses";
 import { parseQrCodeJsonInput } from "@/lib/qr/validation";
 
 const routeParamsSchema = z.object({
   id: z.string().uuid("Invalid QR code id."),
 });
-
-function toUnauthorizedResponse() {
-  return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-}
-
-function toQrJson(qrCode: {
-  id: string;
-  name: string;
-  slug: string;
-  destinationUrl: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}) {
-  return {
-    id: qrCode.id,
-    name: qrCode.name,
-    slug: qrCode.slug,
-    destinationUrl: qrCode.destinationUrl,
-    isActive: qrCode.isActive,
-    createdAt: qrCode.createdAt.toISOString(),
-    updatedAt: qrCode.updatedAt.toISOString(),
-  };
-}
 
 export async function GET(
   _: Request,

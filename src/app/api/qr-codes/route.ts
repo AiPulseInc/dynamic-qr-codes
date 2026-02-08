@@ -4,46 +4,12 @@ import { z } from "zod";
 import { getAuthenticatedProfile } from "@/lib/auth/user";
 import { createRequestLogContext, logError, logInfo, logWarn } from "@/lib/observability/log";
 import { createOwnedQrCode, listOwnedQrCodes, QrDuplicateSlugError } from "@/lib/qr/service";
+import { toQrJson } from "@/lib/qr/types";
 import { extractClientIp } from "@/lib/redirect/scan-utils";
 import { consumeRateLimit } from "@/lib/security/rate-limit";
+import { toRateLimitedResponse, toUnauthorizedResponse } from "@/lib/security/responses";
 import { parseQrCodeJsonInput, parseQrSearchTerm, parseQrStatusFilter } from "@/lib/qr/validation";
 
-function toUnauthorizedResponse() {
-  return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-}
-
-function toRateLimitedResponse(retryAfterSeconds: number, requestId: string) {
-  return NextResponse.json(
-    { error: "Too many requests. Please try again later." },
-    {
-      status: 429,
-      headers: {
-        "retry-after": String(retryAfterSeconds),
-        "x-request-id": requestId,
-      },
-    },
-  );
-}
-
-function toQrJson(qrCode: {
-  id: string;
-  name: string;
-  slug: string;
-  destinationUrl: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}) {
-  return {
-    id: qrCode.id,
-    name: qrCode.name,
-    slug: qrCode.slug,
-    destinationUrl: qrCode.destinationUrl,
-    isActive: qrCode.isActive,
-    createdAt: qrCode.createdAt.toISOString(),
-    updatedAt: qrCode.updatedAt.toISOString(),
-  };
-}
 
 export async function GET(request: Request) {
   const logContext = createRequestLogContext({
