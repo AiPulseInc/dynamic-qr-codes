@@ -1,3 +1,4 @@
+import HtmlLangSync from "@/app/components/HtmlLangSync";
 import LandingContent from "@/app/components/LandingContent";
 import { LanguageProvider } from "@/app/i18n/LanguageContext";
 import { getAuthenticatedUser } from "@/lib/auth/user";
@@ -16,6 +17,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <LanguageProvider>
+      <HtmlLangSync />
       <LandingContent
         isAuthenticated={!!user}
         authAction={authAction}

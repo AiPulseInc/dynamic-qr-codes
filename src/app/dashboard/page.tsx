@@ -54,30 +54,34 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     qr: params.qr,
     bots: params.bots,
   });
-  const [qrResult, qrCodeOptions] = await Promise.all([
-    listOwnedQrCodes(profile.id, {
+  let qrResult = { items: [] as Awaited<ReturnType<typeof listOwnedQrCodes>>["items"], totalCount: 0, page: 1, pageSize, totalPages: 0 };
+  let qrCodeOptions: Awaited<ReturnType<typeof listOwnedQrCodeOptions>> = [];
+  let resolvedAnalyticsFilters = analyticsFilters;
+  let analytics: Awaited<ReturnType<typeof getUserAnalyticsSnapshot>> | null = null;
+
+  if (activeTab === "qr") {
+    qrResult = await listOwnedQrCodes(profile.id, {
       search,
       status,
       page,
       pageSize,
-    }),
-    listOwnedQrCodeOptions(profile.id),
-  ]);
-  let resolvedAnalyticsFilters = analyticsFilters;
-  let analytics;
+    });
+  } else {
+    qrCodeOptions = await listOwnedQrCodeOptions(profile.id);
 
-  try {
-    analytics = await getUserAnalyticsSnapshot(profile.id, analyticsFilters);
-  } catch (error) {
-    if (!(error instanceof QrOwnershipError)) {
-      throw error;
+    try {
+      analytics = await getUserAnalyticsSnapshot(profile.id, analyticsFilters);
+    } catch (error) {
+      if (!(error instanceof QrOwnershipError)) {
+        throw error;
+      }
+
+      resolvedAnalyticsFilters = {
+        ...analyticsFilters,
+        qrCodeId: null,
+      };
+      analytics = await getUserAnalyticsSnapshot(profile.id, resolvedAnalyticsFilters);
     }
-
-    resolvedAnalyticsFilters = {
-      ...analyticsFilters,
-      qrCodeId: null,
-    };
-    analytics = await getUserAnalyticsSnapshot(profile.id, resolvedAnalyticsFilters);
   }
   const urlParams = {
     search,
@@ -157,7 +161,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       {activeTab === "analytics" ? (
         <AnalyticsTab
-          analytics={analytics}
+          analytics={analytics!}
           filters={resolvedAnalyticsFilters}
           qrCodeOptions={qrCodeOptions}
           search={search}

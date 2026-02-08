@@ -84,6 +84,15 @@ export async function listOwnedQrCodes(userId: string, filters: QrFilters) {
       },
       take: filters.pageSize,
       skip,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        destinationUrl: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     }),
     prisma.qrCode.count({
       where: whereClause,

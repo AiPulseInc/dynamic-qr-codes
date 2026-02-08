@@ -6,8 +6,6 @@ import {
   getOwnedQrCodeById,
   QrDuplicateSlugError,
   QrOwnershipError,
-  QrValidationError,
-  setOwnedQrCodeStatus,
   updateOwnedQrCode,
 } from "@/lib/qr/service";
 import { toQrJson } from "@/lib/qr/types";
@@ -94,38 +92,3 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  _: Request,
-  context: {
-    params: Promise<{ id: string }>;
-  },
-) {
-  const profile = await getAuthenticatedProfile();
-
-  if (!profile) {
-    return toUnauthorizedResponse();
-  }
-
-  try {
-    const params = routeParamsSchema.parse(await context.params);
-    await setOwnedQrCodeStatus(profile.id, params.id, false);
-    return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0]?.message ?? "Invalid QR code id." },
-        { status: 400 },
-      );
-    }
-
-    if (error instanceof QrOwnershipError) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
-    }
-
-    if (error instanceof QrValidationError) {
-      return NextResponse.json({ error: error.message }, { status: 409 });
-    }
-
-    return NextResponse.json({ error: "Unable to disable QR code." }, { status: 500 });
-  }
-}

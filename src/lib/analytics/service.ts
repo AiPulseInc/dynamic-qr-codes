@@ -38,6 +38,7 @@ export async function listOwnedQrCodeOptions(userId: string) {
     orderBy: {
       name: "asc",
     },
+    take: 200,
     select: {
       id: true,
       name: true,
@@ -198,6 +199,8 @@ export async function getUserAnalyticsSnapshot(userId: string, filters: Analytic
 
 export type { AnalyticsSummary };
 
+const CSV_EXPORT_MAX_ROWS = 50_000;
+
 export async function getUserAnalyticsCsvRows(userId: string, filters: AnalyticsFilters) {
   await assertFilterOwnership(userId, filters.qrCodeId);
   const whereClause = toWhereClause(userId, filters);
@@ -207,6 +210,7 @@ export async function getUserAnalyticsCsvRows(userId: string, filters: Analytics
     orderBy: {
       scannedAt: "desc",
     },
+    take: CSV_EXPORT_MAX_ROWS,
     select: {
       scannedAt: true,
       ipHash: true,
