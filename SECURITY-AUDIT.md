@@ -161,12 +161,10 @@ const qrCodeId = trimmedQrId.length > 0 && z.string().uuid().safeParse(trimmedQr
 
 ---
 
-### LOW-2: Middleware file named `proxy.ts` instead of `middleware.ts`
+### ~~LOW-2: Middleware file named `proxy.ts` instead of `middleware.ts`~~ (FALSE POSITIVE)
 
 **File:** `proxy.ts` (project root)
-**Risk:** Next.js expects `middleware.ts` at the project root. The file is named `proxy.ts` — verify this is actually being loaded by Next.js. If not, the auth guard middleware is not running, which would be a **critical** issue.
-
-**Recommendation:** Verify middleware is active. If Next.js is not picking up `proxy.ts`, rename to `middleware.ts`.
+**Status:** Not an issue. Next.js 16 renamed the `middleware.ts` convention to `proxy.ts` with an exported `proxy` function. The original file was correct. See: https://nextjs.org/docs/messages/middleware-to-proxy
 
 ---
 
