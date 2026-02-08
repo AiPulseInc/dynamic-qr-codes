@@ -1,7 +1,9 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
+import AuthModal from "@/app/components/AuthModal";
 import DashboardMockup from "@/app/components/DashboardMockup";
 import LandingAuthButtons from "@/app/components/LandingAuthButtons";
 import LandingFinalCTA from "@/app/components/LandingFinalCTA";
@@ -93,6 +95,20 @@ type LandingContentProps = {
 
 export default function LandingContent({ isAuthenticated, authAction, authNext }: LandingContentProps) {
   const { t } = useLanguage();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTab, setModalTab] = useState<"signin" | "signup">("signin");
+
+  useEffect(() => {
+    if (authAction) {
+      setModalTab(authAction);
+      setModalOpen(true);
+    }
+  }, [authAction]);
+
+  const openAuth = useCallback((tab: "signin" | "signup") => {
+    setModalTab(tab);
+    setModalOpen(true);
+  }, []);
 
   const stats = [
     { value: "99.9%", label: t.stats.uptimeSla },
@@ -126,7 +142,7 @@ export default function LandingContent({ isAuthenticated, authAction, authNext }
 
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            <LandingAuthButtons isAuthenticated={isAuthenticated} authAction={authAction} authNext={authNext} />
+            <LandingAuthButtons isAuthenticated={isAuthenticated} onOpenAuth={openAuth} />
           </div>
         </div>
       </nav>
@@ -144,7 +160,7 @@ export default function LandingContent({ isAuthenticated, authAction, authNext }
             <p className="animate-fade-in-up-delay-2 mt-6 max-w-lg text-lg text-text-muted">
               {t.hero.description}
             </p>
-            <LandingHeroCTA isAuthenticated={isAuthenticated} />
+            <LandingHeroCTA isAuthenticated={isAuthenticated} onOpenAuth={openAuth} />
           </div>
 
           {/* Hero visual — dark glassmorphism QR card mockup */}
@@ -376,7 +392,7 @@ export default function LandingContent({ isAuthenticated, authAction, authNext }
             {t.finalCta.subtitle}
           </p>
           <div className="relative mt-8 flex flex-wrap items-center justify-center gap-4">
-            <LandingFinalCTA />
+            <LandingFinalCTA onOpenAuth={openAuth} />
           </div>
         </div>
       </section>
@@ -398,6 +414,12 @@ export default function LandingContent({ isAuthenticated, authAction, authNext }
           </div>
         </div>
       </footer>
+      <AuthModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        defaultTab={modalTab}
+        nextPath={authNext}
+      />
     </div>
   );
 }

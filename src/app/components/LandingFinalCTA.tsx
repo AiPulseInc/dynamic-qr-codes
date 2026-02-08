@@ -1,8 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
-import AuthModal from "@/app/components/AuthModal";
 import { useLanguage } from "@/app/i18n/LanguageContext";
 
 function IconArrowRight({ className = "h-5 w-5" }: { className?: string }) {
@@ -14,26 +11,23 @@ function IconArrowRight({ className = "h-5 w-5" }: { className?: string }) {
   );
 }
 
-export default function LandingFinalCTA() {
-  const [modalOpen, setModalOpen] = useState(false);
+type LandingFinalCTAProps = {
+  onOpenAuth: (tab: "signin" | "signup") => void;
+};
+
+export default function LandingFinalCTA({ onOpenAuth }: LandingFinalCTAProps) {
   const { t } = useLanguage();
 
   return (
     <>
       <button
         type="button"
-        onClick={() => setModalOpen(true)}
+        onClick={() => onOpenAuth("signup")}
         className="group inline-flex cursor-pointer items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-primary-light px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/40"
       >
         {t.finalCta.button}
         <IconArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
       </button>
-
-      <AuthModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        defaultTab="signup"
-      />
     </>
   );
 }

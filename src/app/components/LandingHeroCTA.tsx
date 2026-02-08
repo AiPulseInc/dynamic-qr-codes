@@ -1,8 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
-import AuthModal from "@/app/components/AuthModal";
 import { useLanguage } from "@/app/i18n/LanguageContext";
 
 function IconArrowRight({ className = "h-5 w-5" }: { className?: string }) {
@@ -16,10 +13,10 @@ function IconArrowRight({ className = "h-5 w-5" }: { className?: string }) {
 
 type LandingHeroCTAProps = {
   isAuthenticated: boolean;
+  onOpenAuth: (tab: "signin" | "signup") => void;
 };
 
-export default function LandingHeroCTA({ isAuthenticated }: LandingHeroCTAProps) {
-  const [modalOpen, setModalOpen] = useState(false);
+export default function LandingHeroCTA({ isAuthenticated, onOpenAuth }: LandingHeroCTAProps) {
   const { t } = useLanguage();
 
   if (isAuthenticated) {
@@ -41,7 +38,7 @@ export default function LandingHeroCTA({ isAuthenticated }: LandingHeroCTAProps)
       <div className="animate-fade-in-up-delay-3 mt-8 flex flex-wrap items-center gap-4">
         <button
           type="button"
-          onClick={() => setModalOpen(true)}
+          onClick={() => onOpenAuth("signup")}
           className="group inline-flex cursor-pointer items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-primary-light px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/40"
         >
           {t.hero.ctaPrimary}
@@ -54,12 +51,6 @@ export default function LandingHeroCTA({ isAuthenticated }: LandingHeroCTAProps)
           {t.hero.ctaSecondary}
         </a>
       </div>
-
-      <AuthModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        defaultTab="signup"
-      />
     </>
   );
 }
