@@ -9,8 +9,12 @@ type Bucket = {
   windowStartMs: number;
 };
 
+const MAX_BUCKETS = 10_000;
+const CLEANUP_INTERVAL_MS = 60_000;
+
 const rateLimitState = globalThis as typeof globalThis & {
   __dynamicQrRateLimitBuckets?: Map<string, Bucket>;
+  __dynamicQrRateLimitLastCleanup?: number;
 };
 
 function getBuckets(): Map<string, Bucket> {
@@ -21,6 +25,35 @@ function getBuckets(): Map<string, Bucket> {
   return rateLimitState.__dynamicQrRateLimitBuckets;
 }
 
+function evictExpired(buckets: Map<string, Bucket>, now: number, maxWindowMs: number): void {
+  const lastCleanup = rateLimitState.__dynamicQrRateLimitLastCleanup ?? 0;
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) {
+    return;
+  }
+
+  rateLimitState.__dynamicQrRateLimitLastCleanup = now;
+
+  for (const [key, bucket] of buckets) {
+    if (now - bucket.windowStartMs >= maxWindowMs) {
+      buckets.delete(key);
+    }
+  }
+}
+
+function evictOldest(buckets: Map<string, Bucket>): void {
+  if (buckets.size <= MAX_BUCKETS) {
+    return;
+  }
+
+  const deleteCount = buckets.size - MAX_BUCKETS;
+  const iterator = buckets.keys();
+  for (let i = 0; i < deleteCount; i++) {
+    const next = iterator.next();
+    if (next.done) break;
+    buckets.delete(next.value);
+  }
+}
+
 export function consumeRateLimit(params: {
   key: string;
   limit: number;
@@ -29,13 +62,19 @@ export function consumeRateLimit(params: {
 }): RateLimitResult {
   const now = params.nowMs ?? Date.now();
   const buckets = getBuckets();
+
+  evictExpired(buckets, now, params.windowMs);
+
   const existing = buckets.get(params.key);
 
   if (!existing || now - existing.windowStartMs >= params.windowMs) {
+    buckets.delete(params.key);
     buckets.set(params.key, {
       count: 1,
       windowStartMs: now,
     });
+
+    evictOldest(buckets);
 
     return {
       allowed: true,
@@ -54,6 +93,7 @@ export function consumeRateLimit(params: {
   }
 
   existing.count += 1;
+  buckets.delete(params.key);
   buckets.set(params.key, existing);
 
   return {
@@ -65,4 +105,5 @@ export function consumeRateLimit(params: {
 
 export function resetRateLimitState(): void {
   getBuckets().clear();
+  rateLimitState.__dynamicQrRateLimitLastCleanup = 0;
 }

@@ -10,7 +10,7 @@ import { getUserAnalyticsSnapshot, listOwnedQrCodeOptions } from "@/lib/analytic
 import { getAuthenticatedProfile } from "@/lib/auth/user";
 import { getServerEnv } from "@/lib/env/server";
 import { listOwnedQrCodes, QrOwnershipError } from "@/lib/qr/service";
-import { parseQrSearchTerm, parseQrStatusFilter } from "@/lib/qr/validation";
+import { parseQrPage, parseQrPageSize, parseQrSearchTerm, parseQrStatusFilter } from "@/lib/qr/validation";
 
 type DashboardPageProps = {
   searchParams: Promise<{
@@ -23,6 +23,8 @@ type DashboardPageProps = {
     to?: string;
     qr?: string;
     bots?: string;
+    page?: string;
+    pageSize?: string;
   }>;
 };
 
@@ -44,16 +46,20 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const activeTab = parseTab(params.tab);
   const search = parseQrSearchTerm(params.q ?? null);
   const status = parseQrStatusFilter(params.status ?? null);
+  const page = parseQrPage(params.page ?? null);
+  const pageSize = parseQrPageSize(params.pageSize ?? null);
   const analyticsFilters = parseAnalyticsFilters({
     from: params.from,
     to: params.to,
     qr: params.qr,
     bots: params.bots,
   });
-  const [qrCodes, qrCodeOptions] = await Promise.all([
+  const [qrResult, qrCodeOptions] = await Promise.all([
     listOwnedQrCodes(profile.id, {
       search,
       status,
+      page,
+      pageSize,
     }),
     listOwnedQrCodeOptions(profile.id),
   ]);
@@ -80,6 +86,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     to: resolvedAnalyticsFilters.toInput,
     qrCodeId: resolvedAnalyticsFilters.qrCodeId,
     excludeBots: resolvedAnalyticsFilters.excludeBots,
+    page,
   };
   const returnTo = buildDashboardUrl({ tab: activeTab, ...urlParams });
   const env = getServerEnv();
@@ -160,7 +167,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         />
       ) : (
         <QrCodesTab
-          qrCodes={qrCodes}
+          qrCodes={qrResult.items}
+          totalCount={qrResult.totalCount}
+          page={qrResult.page}
+          totalPages={qrResult.totalPages}
           returnTo={returnTo}
           shortLinkBaseUrl={env.SHORT_LINK_BASE_URL}
           search={search}

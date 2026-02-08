@@ -21,6 +21,8 @@ export class QrDuplicateSlugError extends Error {
 type QrFilters = {
   search: string;
   status: "all" | "active" | "inactive";
+  page: number;
+  pageSize: number;
 };
 
 type QrMutationInput = {
@@ -72,12 +74,29 @@ export async function listOwnedQrCodes(userId: string, filters: QrFilters) {
     whereClause.isActive = false;
   }
 
-  return prisma.qrCode.findMany({
-    where: whereClause,
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const skip = (filters.page - 1) * filters.pageSize;
+
+  const [items, totalCount] = await Promise.all([
+    prisma.qrCode.findMany({
+      where: whereClause,
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: filters.pageSize,
+      skip,
+    }),
+    prisma.qrCode.count({
+      where: whereClause,
+    }),
+  ]);
+
+  return {
+    items,
+    totalCount,
+    page: filters.page,
+    pageSize: filters.pageSize,
+    totalPages: Math.ceil(totalCount / filters.pageSize),
+  };
 }
 
 export async function createOwnedQrCode(userId: string, input: QrMutationInput) {

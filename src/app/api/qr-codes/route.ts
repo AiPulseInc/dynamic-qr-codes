@@ -8,7 +8,7 @@ import { toQrJson } from "@/lib/qr/types";
 import { extractClientIp } from "@/lib/redirect/scan-utils";
 import { consumeRateLimit } from "@/lib/security/rate-limit";
 import { toRateLimitedResponse, toUnauthorizedResponse } from "@/lib/security/responses";
-import { parseQrCodeJsonInput, parseQrSearchTerm, parseQrStatusFilter } from "@/lib/qr/validation";
+import { parseQrCodeJsonInput, parseQrPage, parseQrPageSize, parseQrSearchTerm, parseQrStatusFilter } from "@/lib/qr/validation";
 
 
 export async function GET(request: Request) {
@@ -39,15 +39,23 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const search = parseQrSearchTerm(url.searchParams.get("q"));
   const status = parseQrStatusFilter(url.searchParams.get("status"));
+  const page = parseQrPage(url.searchParams.get("page"));
+  const pageSize = parseQrPageSize(url.searchParams.get("pageSize"));
 
-  const qrCodes = await listOwnedQrCodes(profile.id, {
+  const result = await listOwnedQrCodes(profile.id, {
     search,
     status,
+    page,
+    pageSize,
   });
 
-  logInfo("qr_codes.list.success", { ...logContext, userId: profile.id }, { count: qrCodes.length });
+  logInfo("qr_codes.list.success", { ...logContext, userId: profile.id }, { count: result.items.length });
   return NextResponse.json({
-    items: qrCodes.map(toQrJson),
+    items: result.items.map(toQrJson),
+    page: result.page,
+    pageSize: result.pageSize,
+    totalCount: result.totalCount,
+    totalPages: result.totalPages,
   });
 }
 

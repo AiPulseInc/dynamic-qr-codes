@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-08
 **Codebase Age:** Modern (Next.js 16, React 19, Prisma 6, Zod 4, Tailwind 4)
-**Overall Health:** ⭐⭐⭐⭐ (4/5) — Clean MVP with solid foundations, some structural debt to address before scaling.
+**Overall Health:** ⭐⭐⭐⭐½ (4.5/5) — Clean MVP with solid foundations. Sprint 0 refactoring completed 2026-02-08.
 
 ---
 
@@ -61,34 +61,32 @@ Dashboard (SSC) → Server Actions → Prisma CRUD
 
 ### 🔴 HIGH — Fix Before Scaling
 
-#### H-1: `toQrJson()` duplicated across 2 files
-- **Files:** `src/app/api/qr-codes/route.ts:28-46` and `src/app/api/qr-codes/[id]/route.ts:23-41`
-- **Risk:** Divergence when adding fields (e.g., `expiresAt` for the billing plan)
-- **Fix:** Extract to `src/lib/qr/serialization.ts`
+#### ~~H-1: `toQrJson()` duplicated across 2 files~~ ✅ RESOLVED
+- **Resolution:** Extracted to `src/lib/qr/types.ts` with shared `QrCodeRecord`, `QrCodeListItem`, `QrCodeJson` types and `toQrJson()` function. All API routes now import from single source.
 
-#### H-2: `toUnauthorizedResponse()` duplicated across 3 files
-- **Files:** `src/app/api/qr-codes/route.ts:11`, `src/app/api/qr-codes/[id]/route.ts:19`, `src/app/api/qr/[slug]/route.ts:9`
-- **Fix:** Extract to `src/lib/security/responses.ts`
+#### ~~H-2: `toUnauthorizedResponse()` duplicated across 3 files~~ ✅ RESOLVED
+- **Resolution:** Extracted `toUnauthorizedResponse()` and `toRateLimitedResponse()` to `src/lib/security/responses.ts`. Used by 4 API routes.
 
-#### H-3: `isRedirectError()` duplicated in 2 files
-- **Files:** `src/app/components/AuthModal.tsx:57-64` and `src/app/dashboard/actions.ts:45-52`
-- **Risk:** Custom implementation may break with Next.js updates. Next.js exports `isRedirectError` from `next/dist/client/components/redirect-error`.
-- **Fix:** Extract to `src/lib/next/redirect.ts` or import from Next.js directly
+#### ~~H-3: `isRedirectError()` duplicated in 2 files~~ ✅ RESOLVED
+- **Resolution:** Extracted to `src/lib/next/redirect.ts`. Both `AuthModal.tsx` and `dashboard/actions.ts` now import from shared util.
 
-#### H-4: Analytics loads ALL scan events into memory
-- **File:** `src/lib/analytics/service.ts:53-74`
-- **Risk:** `prisma.scanEvent.findMany()` with no pagination. A user with 100K scans will OOM the server.
-- **Fix:** Use Prisma `groupBy` + raw SQL aggregations for KPIs, daily series, and top QR codes instead of loading all events and computing in JS.
+#### ~~H-4: Analytics loads ALL scan events into memory~~ ✅ RESOLVED
+- **Resolution:** Replaced `findMany()` + in-memory computation with 3 parallel raw SQL queries:
+  - KPIs (`COUNT(*)`, `COUNT(DISTINCT ip_hash)`, `COUNT(*) FILTER`) in one query
+  - Daily series via `GROUP BY to_char(scanned_at, 'YYYY-MM-DD')`
+  - Top QR codes via `GROUP BY qr_code_id` with `JOIN qr_codes` and `LIMIT 5`
+- Analytics now scales to millions of events without OOM risk. `summary.ts` retained for its tests only.
 
-#### H-5: Dashboard page is a 491-line monolith
-- **File:** `src/app/dashboard/page.tsx`
-- **Risk:** Hard to maintain, test, or gate features (needed for Pro plan). Mixes data fetching, URL building, and UI rendering.
-- **Fix:** Extract into sub-components: `<AnalyticsTab />`, `<QrCodesTab />`, `<QrCreateForm />`, `<AnalyticsFilters />`, `<KpiCards />`
+#### ~~H-5: Dashboard page is a 491-line monolith~~ ✅ RESOLVED
+- **Resolution:** Split into 4 files:
+  - `src/app/dashboard/page.tsx` — 174 lines (data fetching + layout only)
+  - `src/app/dashboard/components/AnalyticsTab.tsx` — filters, KPIs, tables
+  - `src/app/dashboard/components/QrCodesTab.tsx` — create form + QR list
+  - `src/app/dashboard/components/KpiCards.tsx` — 4 KPI cards
+- Ready for feature gating in Pro plan.
 
-#### H-6: `QrCode` type duplicated in 3 places
-- **Files:** `src/components/qr-list-item.tsx:7-14`, `src/components/qr-edit-modal.tsx:8-15`, `src/lib/qr/service.ts:26-31`
-- **Risk:** Type drift when schema changes
-- **Fix:** Use Prisma-generated types or a shared type in `src/lib/qr/types.ts`
+#### ~~H-6: `QrCode` type duplicated in 3 places~~ ✅ RESOLVED
+- **Resolution:** Created `src/lib/qr/types.ts` with `QrCodeRecord` (full) and `QrCodeListItem` (without `updatedAt`). Both `qr-list-item.tsx` and `qr-edit-modal.tsx` now import shared types.
 
 ### 🟡 MEDIUM — Address Before Pro Plan
 
@@ -107,24 +105,18 @@ Dashboard (SSC) → Server Actions → Prisma CRUD
 - **Impact:** Hard to maintain. Contains 6 inline SVG icon components (lines 16-83).
 - **Fix:** Extract icons to `src/app/components/icons/` directory.
 
-#### M-4: Login page (`/login/page.tsx`) uses light theme, rest of app is dark
-- **File:** `src/app/login/page.tsx` — `bg-white`, `text-zinc-900`, `border-zinc-200`
-- **Impact:** Jarring UX if user lands on `/login` directly. Middleware redirects `/login` → `/?auth=signin` but the page still exists.
-- **Fix:** Either delete the page (middleware already redirects) or restyle to dark theme. Since middleware redirects both authenticated and unauthenticated users away from `/login`, this page is effectively dead code.
+#### ~~M-4: Login page (`/login/page.tsx`) uses light theme, rest of app is dark~~ ✅ RESOLVED
+- **Resolution:** Deleted `src/app/login/page.tsx` (dead code — middleware redirects all traffic away). Server actions in `src/app/login/actions.ts` retained (used by `AuthModal`).
 
-#### M-5: `buildReturnToPath()` and `buildTabHref()` are near-identical
-- **File:** `src/app/dashboard/page.tsx:34-91`
-- **Impact:** 58 lines of duplicated URL-building logic
-- **Fix:** Merge into a single `buildDashboardUrl()` helper
+#### ~~M-5: `buildReturnToPath()` and `buildTabHref()` are near-identical~~ ✅ RESOLVED
+- **Resolution:** Replaced both with `buildDashboardUrl()` in `src/app/dashboard/url.ts`. Single function handles all dashboard URL construction.
 
 #### M-6: No CSRF protection on server actions
 - **Impact:** Next.js 16 server actions have some built-in protection (origin check), but explicit CSRF tokens would be safer for the billing endpoints coming in Pro plan.
 - **Fix:** Add CSRF token validation for sensitive mutations (billing, admin)
 
-#### M-7: `getAuthenticatedProfile()` does an upsert on every call
-- **File:** `src/lib/auth/user.ts:32-43`
-- **Impact:** Every authenticated page load does a `prisma.profile.upsert()`. This is fine for MVP but adds unnecessary DB writes on every request.
-- **Fix:** Split into `getProfile()` (read-only, cached) and `ensureProfile()` (upsert, called only on first sign-in)
+#### ~~M-7: `getAuthenticatedProfile()` does an upsert on every call~~ ✅ RESOLVED
+- **Resolution:** `getAuthenticatedProfile()` now does `findUnique` first (read-only). Falls back to `ensureProfile()` (upsert) only when profile doesn't exist yet. Eliminates unnecessary DB writes on every authenticated request.
 
 ### 🟢 LOW — Nice to Have
 
@@ -201,45 +193,45 @@ Dashboard (SSC) → Server Actions → Prisma CRUD
 
 ---
 
-## 6. File Clutter in Project Root
+## 6. ~~File Clutter in Project Root~~ ✅ RESOLVED
 
-The project root has accumulated several planning/documentation files that should be organized:
+All planning/documentation files organized into `docs/` folder:
 
-| File | Size | Recommendation |
-|------|------|---------------|
-| `SECURITY-AUDIT.md` | 10KB | ✅ Keep |
-| `CODE-REVIEW.md` | This file | ✅ Keep |
-| `README.md` | 2KB | ✅ Keep |
-| `pro-billing-feature-gating.md` | 28KB | Move to `docs/` |
-| `IMPLEMENTATION_SPRINT_PLAN.md` | 10KB | Move to `docs/` |
-| `EXTERNAL_INTEGRATIONS_PREP_PLAN.md` | 6KB | Move to `docs/` |
-| `OPERATIONS_RUNBOOK.md` | 3KB | Move to `docs/` |
-| `authentication-setup-guide.md` | 4KB | Move to `docs/` |
-| `session-summary.md` | 6KB | Move to `docs/` or delete |
-| `test-result.md` | 12KB | Move to `docs/` or delete |
-| `img-*.png` (4 files) | ~3.4MB | Move to `docs/images/` or delete |
-| `sprint-implementation-planner/` | 3 items | Move to `docs/` |
+| File | New Location |
+|------|-------------|
+| `SECURITY-AUDIT.md` | Root (kept) |
+| `CODE-REVIEW.md` | Root (kept) |
+| `README.md` | Root (kept) |
+| `pro-billing-feature-gating.md` | `docs/` ✅ |
+| `IMPLEMENTATION_SPRINT_PLAN.md` | `docs/` ✅ |
+| `EXTERNAL_INTEGRATIONS_PREP_PLAN.md` | `docs/` ✅ |
+| `OPERATIONS_RUNBOOK.md` | `docs/` ✅ |
+| `authentication-setup-guide.md` | `docs/` ✅ |
+| `session-summary.md` | `docs/` ✅ |
+| `test-result.md` | `docs/` ✅ |
+| `img-*.png` (4 files) | `docs/images/` ✅ |
+| `sprint-implementation-planner/` | `docs/` ✅ |
 
 ---
 
 ## 7. Refactoring Plan (Prioritized)
 
-### Before Pro Plan Implementation (Sprint 0)
+### ~~Before Pro Plan Implementation (Sprint 0)~~ ✅ COMPLETED (2026-02-08)
 
-| # | Task | Effort | Impact |
+| # | Task | Status | Commit |
 |---|------|--------|--------|
-| 1 | Extract `toQrJson()` to shared serializer (H-1) | 15 min | Prevents divergence |
-| 2 | Extract `toUnauthorizedResponse()` to shared helper (H-2) | 10 min | DRY |
-| 3 | Extract `isRedirectError()` to shared util (H-3) | 10 min | Prevents breakage |
-| 4 | Replace in-memory analytics with SQL aggregations (H-4) | 2-3 hours | Prevents OOM |
-| 5 | Split dashboard page into sub-components (H-5) | 1-2 hours | Enables feature gating |
-| 6 | Create shared QR code types from Prisma (H-6) | 15 min | Type safety |
-| 7 | Merge `buildReturnToPath`/`buildTabHref` (M-5) | 15 min | DRY |
-| 8 | Delete or restyle `/login` page (M-4) | 15 min | Dead code removal |
-| 9 | Split `getAuthenticatedProfile` into read/write (M-7) | 30 min | Performance |
-| 10 | Organize root docs into `docs/` folder | 10 min | Clean workspace |
+| 1 | Extract `toQrJson()` → `src/lib/qr/types.ts` (H-1) | ✅ Done | `33342b2` |
+| 2 | Extract `toUnauthorizedResponse()` → `src/lib/security/responses.ts` (H-2) | ✅ Done | `33342b2` |
+| 3 | Extract `isRedirectError()` → `src/lib/next/redirect.ts` (H-3) | ✅ Done | `33342b2` |
+| 4 | Replace in-memory analytics with SQL aggregations (H-4) | ✅ Done | `33342b2` |
+| 5 | Split dashboard into `AnalyticsTab`, `QrCodesTab`, `KpiCards` (H-5) | ✅ Done | `33342b2` |
+| 6 | Create shared QR types `QrCodeRecord`, `QrCodeListItem` (H-6) | ✅ Done | `33342b2` |
+| 7 | Merge URL builders → `buildDashboardUrl()` (M-5) | ✅ Done | `33342b2` |
+| 8 | Delete dead `/login` page (M-4) | ✅ Done | `33342b2` |
+| 9 | Split `getAuthenticatedProfile` → read-first + upsert fallback (M-7) | ✅ Done | `33342b2` |
+| 10 | Organize root docs into `docs/` folder | ✅ Done | `33342b2` |
 
-**Total Sprint 0 effort: ~5-6 hours**
+**All 10 Sprint 0 items completed.** Build ✅, TypeScript ✅, 29/29 tests ✅.
 
 ### During Pro Plan (as needed)
 - Add pagination to QR code list (M-2)
@@ -264,12 +256,12 @@ RootLayout (layout.tsx)
 │           ├── LandingFinalCTA [Client] ← calls onOpenAuth()
 │           └── AuthModal [Client] ← single instance at root level
 │
-├── DashboardPage (dashboard/page.tsx) [SSC] ← 491 lines
-│   ├── QrListItem [Client]
-│   │   └── QrEditModal [Client] ← uses <dialog>
-│   └── (inline analytics/QR tabs)
-│
-├── LoginPage (login/page.tsx) [SSC] ← dead code (middleware redirects away)
+├── DashboardPage (dashboard/page.tsx) [SSC] ← 174 lines (data + layout)
+│   ├── AnalyticsTab [SSC] ← filters, KPIs, tables
+│   │   └── KpiCards [SSC] ← 4 metric cards
+│   ├── QrCodesTab [SSC] ← create form + list
+│   │   └── QrListItem [Client]
+│   │       └── QrEditModal [Client] ← uses <dialog>
 │
 └── API Routes
     ├── /r/[slug] ← redirect handler (public, no auth)
@@ -298,14 +290,67 @@ RootLayout (layout.tsx)
 
 ## 10. Summary Verdict
 
-This is a **well-structured MVP** with clean code, good separation of concerns, and solid security practices. The main technical debt is:
+This is a **well-structured MVP** with clean code, good separation of concerns, and solid security practices.
 
-1. **Duplication** — several helpers copy-pasted across files (easy fix)
-2. **Monolithic dashboard** — needs splitting before feature gating
-3. **Analytics scalability** — loading all events into memory won't scale
-4. **Dead code** — `/login` page is unreachable
+### Post-Sprint 0 Status
+All HIGH findings resolved. The remaining open items are:
+- **M-1**: In-memory rate limiting (acceptable for single instance)
+- **M-2**: No pagination on QR code list (needed for Pro)
+- **M-3**: `LandingContent.tsx` has inline SVG icons (cosmetic)
+- **M-6**: No explicit CSRF tokens (needed for billing endpoints)
+- **L-1 through L-6**: Low-priority nice-to-haves
 
-The codebase is in **good shape for the Pro plan implementation**. Spending ~5-6 hours on Sprint 0 refactoring will make the billing/feature-gating work significantly cleaner.
+The codebase is **ready for Pro plan implementation**. Dashboard is modular, analytics scales, shared utilities prevent divergence.
 
 > *"Every line of legacy code was someone's best effort. Understand before you judge."*
-> — This codebase shows clear intent and good engineering decisions throughout. The debt is normal for an MVP and well-contained.
+> — This codebase shows clear intent and good engineering decisions throughout.
+
+---
+
+## Appendix: Sprint 0 Changelog
+
+**Commit:** `33342b2` (2026-02-08)
+
+### New files created
+| File | Purpose |
+|------|--------|
+| `src/lib/qr/types.ts` | Shared QR code types + `toQrJson()` serializer |
+| `src/lib/security/responses.ts` | Shared `toUnauthorizedResponse()`, `toRateLimitedResponse()` |
+| `src/lib/next/redirect.ts` | Shared `isRedirectError()` |
+| `src/app/dashboard/url.ts` | Shared `buildDashboardUrl()` |
+| `src/app/dashboard/components/AnalyticsTab.tsx` | Analytics filters, KPIs, daily/top tables |
+| `src/app/dashboard/components/QrCodesTab.tsx` | QR create form + list |
+| `src/app/dashboard/components/KpiCards.tsx` | 4 KPI metric cards |
+
+### Files modified
+| File | Change |
+|------|-------|
+| `src/app/api/qr-codes/route.ts` | Removed 36 lines of duplicated helpers, imports shared utils |
+| `src/app/api/qr-codes/[id]/route.ts` | Removed 22 lines of duplicated helpers, imports shared utils |
+| `src/app/api/qr/[slug]/route.ts` | Removed `toUnauthorizedResponse()`, imports shared |
+| `src/app/api/analytics/export/route.ts` | Uses shared `toUnauthorizedResponse()` |
+| `src/app/components/AuthModal.tsx` | Removed inline `isRedirectError()`, imports shared |
+| `src/app/dashboard/actions.ts` | Removed inline `isRedirectError()`, imports shared |
+| `src/app/dashboard/page.tsx` | 491 → 174 lines, delegates to sub-components |
+| `src/components/qr-list-item.tsx` | Uses shared `QrCodeListItem` type |
+| `src/components/qr-edit-modal.tsx` | Uses shared `QrCodeListItem` type |
+| `src/lib/analytics/service.ts` | Replaced `findMany` + JS computation with 3 raw SQL queries |
+| `src/lib/auth/user.ts` | `getAuthenticatedProfile()` → `findUnique` first, `ensureProfile()` fallback |
+
+### Files deleted
+| File | Reason |
+|------|-------|
+| `src/app/login/page.tsx` | Dead code — middleware redirects all traffic away |
+
+### Files moved
+| From | To |
+|------|----|
+| `pro-billing-feature-gating.md` | `docs/` |
+| `IMPLEMENTATION_SPRINT_PLAN.md` | `docs/` |
+| `EXTERNAL_INTEGRATIONS_PREP_PLAN.md` | `docs/` |
+| `OPERATIONS_RUNBOOK.md` | `docs/` |
+| `authentication-setup-guide.md` | `docs/` |
+| `session-summary.md` | `docs/` |
+| `test-result.md` | `docs/` |
+| `img-*.png` (4 files) | `docs/images/` |
+| `sprint-implementation-planner/` | `docs/` |

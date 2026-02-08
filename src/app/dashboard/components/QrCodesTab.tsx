@@ -1,9 +1,15 @@
+import Link from "next/link";
+
 import { createQrCode } from "@/app/dashboard/actions";
+import { buildDashboardUrl } from "@/app/dashboard/url";
 import { QrListItem } from "@/components/qr-list-item";
 import type { QrCodeListItem } from "@/lib/qr/types";
 
 type QrCodesTabProps = {
   qrCodes: QrCodeListItem[];
+  totalCount: number;
+  page: number;
+  totalPages: number;
   returnTo: string;
   shortLinkBaseUrl: string;
   search: string;
@@ -18,6 +24,9 @@ type QrCodesTabProps = {
 
 export function QrCodesTab({
   qrCodes,
+  totalCount,
+  page,
+  totalPages,
   returnTo,
   shortLinkBaseUrl,
   search,
@@ -81,7 +90,7 @@ export function QrCodesTab({
       <section className="mt-4 rounded-xl border border-border-card bg-surface-elevated p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-text-heading">My QR codes</h2>
-          <p className="text-sm text-text-muted">{qrCodes.length} total</p>
+          <p className="text-sm text-text-muted">{totalCount} total</p>
         </div>
 
         <form className="mt-3 grid gap-2 sm:grid-cols-[1fr_180px_auto]">
@@ -126,29 +135,75 @@ export function QrCodesTab({
             No QR codes yet. Create your first one above.
           </p>
         ) : (
-          <div className="mt-3 max-h-72 overflow-auto rounded-lg border border-border-card">
-            <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-surface-card text-left">
-                <tr className="border-b border-border-subtle">
-                  <th className="px-3 py-2 text-xs font-medium text-text-muted">Name</th>
-                  <th className="px-3 py-2 text-xs font-medium text-text-muted">Slug</th>
-                  <th className="px-3 py-2 text-xs font-medium text-text-muted">Created</th>
-                  <th className="px-3 py-2 text-xs font-medium text-text-muted">Status</th>
-                  <th className="px-3 py-2 text-xs font-medium text-text-muted">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {qrCodes.map((qrCode) => (
-                  <QrListItem
-                    key={qrCode.id}
-                    qrCode={qrCode}
-                    returnTo={returnTo}
-                    shortLinkBaseUrl={shortLinkBaseUrl}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <>
+            <div className="mt-3 max-h-[28rem] overflow-auto rounded-lg border border-border-card">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-surface-card text-left">
+                  <tr className="border-b border-border-subtle">
+                    <th className="px-3 py-2 text-xs font-medium text-text-muted">Name</th>
+                    <th className="px-3 py-2 text-xs font-medium text-text-muted">Slug</th>
+                    <th className="px-3 py-2 text-xs font-medium text-text-muted">Created</th>
+                    <th className="px-3 py-2 text-xs font-medium text-text-muted">Status</th>
+                    <th className="px-3 py-2 text-xs font-medium text-text-muted">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {qrCodes.map((qrCode) => (
+                    <QrListItem
+                      key={qrCode.id}
+                      qrCode={qrCode}
+                      returnTo={returnTo}
+                      shortLinkBaseUrl={shortLinkBaseUrl}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-xs text-text-muted">
+                  Page {page} of {totalPages}
+                </p>
+                <div className="flex gap-2">
+                  {page > 1 && (
+                    <Link
+                      href={buildDashboardUrl({
+                        tab: "qr",
+                        search,
+                        status,
+                        from: analyticsFilters.fromInput,
+                        to: analyticsFilters.toInput,
+                        qrCodeId: analyticsFilters.qrCodeId,
+                        excludeBots: analyticsFilters.excludeBots,
+                        page: page - 1,
+                      })}
+                      className="rounded-lg border border-border-card bg-surface-card px-3 py-1.5 text-xs font-medium text-text-heading transition-colors duration-200 hover:border-primary hover:text-primary"
+                    >
+                      ← Previous
+                    </Link>
+                  )}
+                  {page < totalPages && (
+                    <Link
+                      href={buildDashboardUrl({
+                        tab: "qr",
+                        search,
+                        status,
+                        from: analyticsFilters.fromInput,
+                        to: analyticsFilters.toInput,
+                        qrCodeId: analyticsFilters.qrCodeId,
+                        excludeBots: analyticsFilters.excludeBots,
+                        page: page + 1,
+                      })}
+                      className="rounded-lg border border-border-card bg-surface-card px-3 py-1.5 text-xs font-medium text-text-heading transition-colors duration-200 hover:border-primary hover:text-primary"
+                    >
+                      Next →
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </section>
     </>

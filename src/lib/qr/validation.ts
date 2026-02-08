@@ -101,3 +101,32 @@ export function parseQrSearchTerm(rawSearch: string | null): string {
 
   return rawSearch.trim();
 }
+
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+
+export function parseQrPage(rawPage: string | null): number {
+  if (!rawPage) {
+    return 1;
+  }
+
+  const parsed = parseInt(rawPage, 10);
+  if (Number.isNaN(parsed) || parsed < 1) {
+    return 1;
+  }
+
+  return parsed;
+}
+
+export function parseQrPageSize(rawPageSize: string | null): number {
+  if (!rawPageSize) {
+    return DEFAULT_PAGE_SIZE;
+  }
+
+  const parsed = parseInt(rawPageSize, 10);
+  if (Number.isNaN(parsed) || parsed < 1) {
+    return DEFAULT_PAGE_SIZE;
+  }
+
+  return Math.min(parsed, MAX_PAGE_SIZE);
+}

@@ -63,4 +63,50 @@ describe("consumeRateLimit", () => {
       }).allowed,
     ).toBe(true);
   });
+
+  it("evicts expired buckets during periodic cleanup", () => {
+    consumeRateLimit({
+      key: "old-key",
+      limit: 10,
+      windowMs: 1_000,
+      nowMs: 1_000,
+    });
+
+    const result = consumeRateLimit({
+      key: "new-key",
+      limit: 10,
+      windowMs: 1_000,
+      nowMs: 62_000,
+    });
+
+    expect(result.allowed).toBe(true);
+
+    const retryOld = consumeRateLimit({
+      key: "old-key",
+      limit: 10,
+      windowMs: 1_000,
+      nowMs: 62_001,
+    });
+    expect(retryOld.allowed).toBe(true);
+    expect(retryOld.remaining).toBe(9);
+  });
+
+  it("handles many unique keys without unbounded growth", () => {
+    for (let i = 0; i < 100; i++) {
+      consumeRateLimit({
+        key: `stress-${i}`,
+        limit: 5,
+        windowMs: 60_000,
+        nowMs: 1_000 + i,
+      });
+    }
+
+    const result = consumeRateLimit({
+      key: "stress-50",
+      limit: 5,
+      windowMs: 60_000,
+      nowMs: 2_000,
+    });
+    expect(result.allowed).toBe(true);
+  });
 });

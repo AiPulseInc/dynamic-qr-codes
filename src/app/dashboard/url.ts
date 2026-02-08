@@ -6,6 +6,7 @@ type DashboardUrlParams = {
   to: string;
   qrCodeId?: string | null;
   excludeBots?: boolean;
+  page?: number;
 };
 
 export function buildDashboardUrl(params: DashboardUrlParams): string {
@@ -23,5 +24,8 @@ export function buildDashboardUrl(params: DashboardUrlParams): string {
     sp.set("qr", params.qrCodeId);
   }
   sp.set("bots", params.excludeBots ? "1" : "0");
+  if (params.page && params.page > 1) {
+    sp.set("page", String(params.page));
+  }
   return `/dashboard?${sp.toString()}`;
 }
