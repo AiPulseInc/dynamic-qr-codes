@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createPortal } from "react-dom";
 
 import { useLanguage } from "@/app/i18n/LanguageContext";
 import {
@@ -91,18 +90,17 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
     }
   }
 
-  return createPortal(
-    <div className="fixed inset-0 z-[100] overflow-y-auto">
-      <div className="flex min-h-full items-end justify-center p-4 pb-20 sm:items-center sm:pb-4">
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[101] bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Modal */}
-      <div className="relative z-[102] w-full max-w-md animate-fade-in-up rounded-2xl border border-border-card bg-surface-card shadow-2xl shadow-primary/20">
+      <div className="relative w-full max-w-md animate-fade-in-up rounded-2xl border border-border-card bg-surface-card shadow-2xl shadow-primary/20">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -112,7 +110,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
           <IconX className="h-5 w-5" />
         </button>
 
-        <div className="p-6 sm:p-8">
+        <div className="p-8">
           {/* Header */}
           <div className="text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15">
@@ -274,8 +272,6 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "signin", next
           </p>
         </div>
       </div>
-      </div>
-    </div>,
-    document.body,
+    </div>
   );
 }
