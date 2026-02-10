@@ -1,10 +1,24 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 import { updateQrCode } from "@/app/dashboard/actions";
+import { generateQrDataUrl } from "@/lib/qr/preview";
 import type { QrCodeListItem } from "@/lib/qr/types";
+
+const CORNER = "absolute h-8 w-8 border-primary";
+
+function CornerBrackets() {
+  return (
+    <>
+      <span className={`${CORNER} left-0 top-0 rounded-tl-lg border-l-[3px] border-t-[3px]`} />
+      <span className={`${CORNER} right-0 top-0 rounded-tr-lg border-r-[3px] border-t-[3px]`} />
+      <span className={`${CORNER} bottom-0 left-0 rounded-bl-lg border-b-[3px] border-l-[3px]`} />
+      <span className={`${CORNER} bottom-0 right-0 rounded-br-lg border-b-[3px] border-r-[3px]`} />
+    </>
+  );
+}
 
 type QrEditModalProps = {
   qrCode: QrCodeListItem;
@@ -15,10 +29,27 @@ type QrEditModalProps = {
 export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [currentSlug, setCurrentSlug] = useState(qrCode.slug);
 
   const shortUrl = `${shortLinkBaseUrl.replace(/\/$/, "")}/r/${qrCode.slug}`;
 
+  useEffect(() => {
+    if (!isOpen || !currentSlug) {
+      setQrDataUrl(null);
+      return;
+    }
+
+    let cancelled = false;
+    generateQrDataUrl(shortLinkBaseUrl, currentSlug).then((url) => {
+      if (!cancelled) setQrDataUrl(url);
+    });
+
+    return () => { cancelled = true; };
+  }, [isOpen, currentSlug, shortLinkBaseUrl]);
+
   function openModal() {
+    setCurrentSlug(qrCode.slug);
     setIsOpen(true);
     dialogRef.current?.showModal();
   }
@@ -65,7 +96,19 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
               </button>
             </div>
 
-            <div className="mt-2 text-sm text-text-muted">
+            {/* Live QR code preview */}
+            <div className="mt-3 flex justify-center">
+              <div className="relative p-2">
+                <CornerBrackets />
+                {qrDataUrl ? (
+                  <img src={qrDataUrl} alt="QR code preview" className="h-32 w-32" />
+                ) : (
+                  <div className="h-32 w-32" />
+                )}
+              </div>
+            </div>
+
+            <div className="mt-2 text-center text-sm text-text-muted">
               <p>
                 Dynamic URL:{" "}
                 <Link className="text-primary-light underline transition-colors duration-200 hover:text-primary" href={shortUrl} target="_blank">
@@ -97,6 +140,7 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
                   name="slug"
                   required
                   type="text"
+                  onInput={(e) => setCurrentSlug((e.target as HTMLInputElement).value.trim())}
                 />
               </label>
 

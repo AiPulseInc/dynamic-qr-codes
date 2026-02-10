@@ -1,27 +1,29 @@
 "use client";
 
-import QRCode from "qrcode";
 import { useEffect, useState } from "react";
+
+import { generateQrDataUrl } from "@/lib/qr/preview";
 
 type QrPreviewProps = {
   shortLinkBaseUrl: string;
+  initialSlug?: string;
 };
 
-const CORNER_CLASSES = "absolute h-5 w-5 border-primary/60";
+const CORNER = "absolute h-8 w-8 border-primary";
 
 function CornerBrackets() {
   return (
     <>
-      <span className={`${CORNER_CLASSES} left-0 top-0 rounded-tl-lg border-l-2 border-t-2`} />
-      <span className={`${CORNER_CLASSES} right-0 top-0 rounded-tr-lg border-r-2 border-t-2`} />
-      <span className={`${CORNER_CLASSES} bottom-0 left-0 rounded-bl-lg border-b-2 border-l-2`} />
-      <span className={`${CORNER_CLASSES} bottom-0 right-0 rounded-br-lg border-b-2 border-r-2`} />
+      <span className={`${CORNER} left-0 top-0 rounded-tl-lg border-l-[3px] border-t-[3px]`} />
+      <span className={`${CORNER} right-0 top-0 rounded-tr-lg border-r-[3px] border-t-[3px]`} />
+      <span className={`${CORNER} bottom-0 left-0 rounded-bl-lg border-b-[3px] border-l-[3px]`} />
+      <span className={`${CORNER} bottom-0 right-0 rounded-br-lg border-b-[3px] border-r-[3px]`} />
     </>
   );
 }
 
-export function QrPreview({ shortLinkBaseUrl }: QrPreviewProps) {
-  const [slug, setSlug] = useState("");
+export function QrPreview({ shortLinkBaseUrl, initialSlug = "" }: QrPreviewProps) {
+  const [slug, setSlug] = useState(initialSlug);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,18 +45,8 @@ export function QrPreview({ shortLinkBaseUrl }: QrPreviewProps) {
       return;
     }
 
-    const baseUrl = shortLinkBaseUrl.replace(/\/$/, "");
-    const redirectUrl = `${baseUrl}/r/${slug}`;
-
     let cancelled = false;
-    QRCode.toDataURL(redirectUrl, {
-      width: 256,
-      margin: 1,
-      color: {
-        dark: "#10B981",
-        light: "#00000000",
-      },
-    }).then((url) => {
+    generateQrDataUrl(shortLinkBaseUrl, slug).then((url) => {
       if (!cancelled) setDataUrl(url);
     });
 
@@ -65,16 +57,16 @@ export function QrPreview({ shortLinkBaseUrl }: QrPreviewProps) {
 
   return (
     <div className="flex shrink-0 items-center justify-center">
-      <div className="relative p-3">
+      <div className="relative p-2">
         <CornerBrackets />
         {dataUrl ? (
           <img
             src={dataUrl}
             alt="QR code preview"
-            className="h-32 w-32"
+            className="h-36 w-36"
           />
         ) : (
-          <div className="grid h-32 w-32 grid-cols-7 grid-rows-7 gap-0.5 p-2">
+          <div className="grid h-36 w-36 grid-cols-7 grid-rows-7 gap-0.5 p-3">
             {Array.from({ length: 49 }).map((_, i) => {
               const row = Math.floor(i / 7);
               const col = i % 7;
