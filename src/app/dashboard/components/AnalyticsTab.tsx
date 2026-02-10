@@ -38,7 +38,9 @@ export function AnalyticsTab({
     <section className="mt-4 rounded-xl border border-border-card bg-surface-elevated p-5">
       <h2 className="text-lg font-semibold text-text-heading">Analytics</h2>
 
-      <form className="mt-3 grid gap-2 md:grid-cols-5">
+      <KpiCards kpis={analytics.kpis} />
+
+      <form className="mt-4 grid gap-2 md:grid-cols-5">
         <input name="tab" type="hidden" value="analytics" />
         <input name="q" type="hidden" value={search} />
         <input name="status" type="hidden" value={status} />
@@ -91,30 +93,28 @@ export function AnalyticsTab({
           </select>
         </label>
 
-        <div className="flex flex-wrap justify-end gap-2 md:col-span-5">
+        <div className="flex flex-wrap justify-center gap-2 md:col-span-5">
           <Link
             href={returnTo}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-primary-light"
+            className="rounded-lg border border-primary bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-white"
           >
             Refresh
           </Link>
+          <button
+            className="rounded-lg border border-primary bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-white"
+            type="submit"
+          >
+            Apply filters
+          </button>
           <Link
-            className="rounded-lg border border-border-card bg-surface-card px-4 py-2 text-sm font-medium text-text-heading transition-colors duration-200 hover:border-primary hover:text-primary"
+            className="rounded-lg bg-gradient-to-r from-primary to-accent-teal px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30"
             href={exportHref}
             prefetch={false}
           >
             Export CSV
           </Link>
-          <button
-            className="rounded-lg border border-border-card bg-surface-card px-4 py-2 text-sm font-medium text-text-heading transition-colors duration-200 hover:border-primary hover:text-primary"
-            type="submit"
-          >
-            Apply filters
-          </button>
         </div>
       </form>
-
-      <KpiCards kpis={analytics.kpis} />
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <article className="rounded-xl border border-border-card bg-surface-card p-5">

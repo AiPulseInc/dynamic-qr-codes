@@ -156,7 +156,7 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
               </label>
 
               <button
-                className="rounded-lg bg-gradient-to-r from-primary to-primary-light px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/40"
+                className="rounded-lg border border-primary bg-primary/10 px-4 py-2.5 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-white"
                 type="submit"
               >
                 Save changes

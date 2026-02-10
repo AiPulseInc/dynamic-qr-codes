@@ -340,7 +340,7 @@ export default function LandingContent({ isAuthenticated, authAction, authNext }
             <span className="text-sm font-semibold text-text-heading">DynamicQR</span>
           </div>
           <p className="text-xs text-text-muted">
-            &copy; {new Date().getFullYear()} DynamicQR v0.91. {t.footer.rights}
+            &copy; {new Date().getFullYear()} DynamicQR v0.93. {t.footer.rights}
           </p>
           <div className="flex gap-6">
             <a href="#features" className="cursor-pointer text-xs text-text-muted transition-colors duration-200 hover:text-primary">{t.nav.features}</a>
