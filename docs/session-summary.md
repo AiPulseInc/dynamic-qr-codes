@@ -1,3 +1,108 @@
+# Session Summary — Feb 10, 2026 (v0.91 → v0.93)
+
+## Overview
+
+Continued UI/UX refinements to the QR Codes dashboard, focusing on consistency, usability, and a new Export modal. Version bumped from 0.91 to 0.93.
+
+---
+
+## Changes Made
+
+### 1. QR Code Gradient Preview (v0.91)
+
+- QR codes now render as SVG with a **green-to-teal linear gradient** (`#10B981` → `#06B6D4`)
+- `generateQrDataUrl()` in `src/lib/qr/preview.ts` produces SVG with injected `<linearGradient>` defs
+- Client-side compatible via `encodeURIComponent` (no `Buffer` dependency)
+
+### 2. Form Rearrangement (v0.91)
+
+- **Destination URL** moved to top (full width)
+- **Slug** (left) and **Name** (right) placed side-by-side below
+- Live QR preview now listens to both `slug` and `destinationUrl` input fields
+
+### 3. Tab Order & Default (v0.91)
+
+- Default dashboard tab changed from Analytics to **QR Codes**
+- QR Codes tab moved to far left, Analytics second
+
+### 4. Corner Brackets (v0.91)
+
+- Thickened to **4px** borders, enlarged to **h-10 w-10** (40px)
+- `CornerBrackets` exported from `QrPreview.tsx` as shared component
+- Edit modal imports shared `CornerBrackets` (single source of truth)
+
+### 5. Export QR Code Modal (v0.93)
+
+- New `QrExportModal` component (`src/components/qr-share-modal.tsx`)
+- **Error correction** selector: Low 7%, Medium 15%, High 30%
+- **QR code size** selector: Small 150px, Medium 200px, Large 300px
+- **QR preview updates live** when error correction or size changes
+- Three action buttons: **Copy** (image to clipboard), **Share** (Web Share API), **Save** (download PNG)
+- API route `/api/qr/[slug]` extended with `ecl` and `width` query params
+
+### 6. Consistent Button Styling (v0.93)
+
+- **Apply filters**, **Export**, **Edit**, **Save changes** buttons all use subtle sign-out style (`border-primary bg-primary/10`)
+- **Create QR code** and **Export CSV** use gradient style (rich primary actions)
+- Reduced visual distraction across the dashboard
+
+### 7. Analytics Tab Layout (v0.93)
+
+- **KPI cards** moved to top of tab (right after heading)
+- Buttons centered: **Refresh** (left) → **Export CSV** (center, gradient) → **Apply filters** (right)
+
+### 8. Table Column Alignment (v0.93)
+
+- Slug, Created, Status, Actions columns and headers **centered**
+- Actions column buttons grouped and centered
+
+---
+
+## Files Modified
+
+### New files:
+```
+src/components/qr-share-modal.tsx    # Export QR Code modal
+```
+
+### Modified files:
+```
+src/lib/qr/preview.ts               # SVG gradient QR generation, ECL param
+src/lib/qr/preview.test.ts          # 48 tests (17 in this file)
+src/app/dashboard/page.tsx           # Default tab, tab order
+src/app/dashboard/components/QrCodesTab.tsx    # Form rearrangement, button styling, centered columns
+src/app/dashboard/components/QrPreview.tsx     # Bolder brackets, dual input listener
+src/app/dashboard/components/AnalyticsTab.tsx  # KPI at top, button layout
+src/components/qr-edit-modal.tsx     # Shared CornerBrackets, subtle button
+src/components/qr-list-item.tsx      # Export button, centered columns
+src/app/api/qr/[slug]/route.ts      # ECL + width params
+src/app/components/LandingContent.tsx # Version 0.93
+```
+
+---
+
+## Test Results
+
+- **48 tests passing** across 9 test files
+- TypeScript clean (`tsc --noEmit`)
+- Build clean (`npm run build`)
+
+---
+
+## Commits (Feb 10)
+
+| Hash | Message |
+|------|---------|
+| `8c72ac7` | feat: gradient QR preview, form rearrange, default QR tab, bolder brackets |
+| `e0ef44d` | feat: Share QR Code modal, gradient action buttons, centered table columns |
+| `39c297b` | refactor: subtle button styling, rename Share→Export, reactive QR preview in modal |
+| `c78704f` | refactor: consistent button styling, KPI cards at top, version 0.93 |
+| `e1078a4` | fix: reorder analytics buttons — Export CSV center, Apply filters right |
+
+---
+
+---
+
 # Session Summary — Feb 7, 2026
 
 ## Overview
