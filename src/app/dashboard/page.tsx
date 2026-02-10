@@ -29,10 +29,10 @@ type DashboardPageProps = {
 };
 
 function parseTab(tab: string | undefined): "analytics" | "qr" {
-  if (tab === "qr") {
-    return "qr";
+  if (tab === "analytics") {
+    return "analytics";
   }
-  return "analytics";
+  return "qr";
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
@@ -138,16 +138,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       <nav className="mt-4 flex gap-1 border-b border-border-subtle">
         <Link
-          href={buildDashboardUrl({ tab: "analytics", ...urlParams })}
-          className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-            activeTab === "analytics"
-              ? "border-b-2 border-text-heading text-text-heading"
-              : "text-text-muted hover:text-text-heading"
-          }`}
-        >
-          Analytics
-        </Link>
-        <Link
           href={buildDashboardUrl({ tab: "qr", ...urlParams })}
           className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
             activeTab === "qr"
@@ -156,6 +146,16 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           }`}
         >
           QR Codes
+        </Link>
+        <Link
+          href={buildDashboardUrl({ tab: "analytics", ...urlParams })}
+          className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+            activeTab === "analytics"
+              ? "border-b-2 border-text-heading text-text-heading"
+              : "text-text-muted hover:text-text-heading"
+          }`}
+        >
+          Analytics
         </Link>
       </nav>
 

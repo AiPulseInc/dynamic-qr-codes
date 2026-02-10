@@ -20,14 +20,17 @@ describe("QR preview utilities", () => {
   });
 
   describe("generateQrDataUrl", () => {
-    it("returns a valid data URL PNG", async () => {
+    it("returns a valid SVG data URL", async () => {
       const dataUrl = await generateQrDataUrl("https://example.com", "test");
-      expect(dataUrl).toMatch(/^data:image\/png;base64,/);
+      expect(dataUrl).toMatch(/^data:image\/svg\+xml/);
     });
 
-    it("encodes the correct redirect URL in the QR code", async () => {
+    it("contains gradient definition for green-to-teal", async () => {
       const dataUrl = await generateQrDataUrl("https://example.com", "my-slug");
-      expect(dataUrl.length).toBeGreaterThan(100);
+      const svg = decodeURIComponent(dataUrl.split(",")[1]);
+      expect(svg).toContain("linearGradient");
+      expect(svg).toContain("#10B981");
+      expect(svg).toContain("#06B6D4");
     });
   });
 });
@@ -42,14 +45,18 @@ describe("QrPreview component structure", () => {
     expect(previewSrc).toContain("generateQrDataUrl");
   });
 
-  it("has corner brackets with thick borders (border-*-[3px])", () => {
-    expect(previewSrc).toContain("border-l-[3px]");
-    expect(previewSrc).toContain("border-t-[3px]");
+  it("listens to both slug and destinationUrl inputs", () => {
+    expect(previewSrc).toContain('input[name="slug"]');
+    expect(previewSrc).toContain('input[name="destinationUrl"]');
   });
 
-  it("has corner brackets that are long enough (h-8 or larger)", () => {
-    // Corners should be at least h-8 w-8 (32px) for visibility
-    expect(previewSrc).toMatch(/[hw]-8/);
+  it("has corner brackets with thick borders (border-*-[4px])", () => {
+    expect(previewSrc).toContain("border-l-[4px]");
+    expect(previewSrc).toContain("border-t-[4px]");
+  });
+
+  it("has corner brackets that are long enough (h-10 w-10)", () => {
+    expect(previewSrc).toContain("h-10 w-10");
   });
 
   it("renders a real QR code img tag", () => {
@@ -68,8 +75,9 @@ describe("QrEditModal component structure", () => {
     expect(modalSrc).toContain("peer-checked:bg-primary");
   });
 
-  it("has a live QR code preview with corner brackets", () => {
+  it("has a live QR code preview with shared CornerBrackets", () => {
     expect(modalSrc).toContain("QR code preview");
     expect(modalSrc).toContain("generateQrDataUrl");
+    expect(modalSrc).toContain("CornerBrackets");
   });
 });

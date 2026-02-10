@@ -4,21 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 import { updateQrCode } from "@/app/dashboard/actions";
+import { CornerBrackets } from "@/app/dashboard/components/QrPreview";
 import { generateQrDataUrl } from "@/lib/qr/preview";
 import type { QrCodeListItem } from "@/lib/qr/types";
-
-const CORNER = "absolute h-8 w-8 border-primary";
-
-function CornerBrackets() {
-  return (
-    <>
-      <span className={`${CORNER} left-0 top-0 rounded-tl-lg border-l-[3px] border-t-[3px]`} />
-      <span className={`${CORNER} right-0 top-0 rounded-tr-lg border-r-[3px] border-t-[3px]`} />
-      <span className={`${CORNER} bottom-0 left-0 rounded-bl-lg border-b-[3px] border-l-[3px]`} />
-      <span className={`${CORNER} bottom-0 right-0 rounded-br-lg border-b-[3px] border-r-[3px]`} />
-    </>
-  );
-}
 
 type QrEditModalProps = {
   qrCode: QrCodeListItem;

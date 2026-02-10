@@ -6,54 +6,57 @@ import { generateQrDataUrl } from "@/lib/qr/preview";
 
 type QrPreviewProps = {
   shortLinkBaseUrl: string;
-  initialSlug?: string;
 };
 
-const CORNER = "absolute h-8 w-8 border-primary";
+const CORNER = "absolute h-10 w-10 border-primary";
 
-function CornerBrackets() {
+export function CornerBrackets() {
   return (
     <>
-      <span className={`${CORNER} left-0 top-0 rounded-tl-lg border-l-[3px] border-t-[3px]`} />
-      <span className={`${CORNER} right-0 top-0 rounded-tr-lg border-r-[3px] border-t-[3px]`} />
-      <span className={`${CORNER} bottom-0 left-0 rounded-bl-lg border-b-[3px] border-l-[3px]`} />
-      <span className={`${CORNER} bottom-0 right-0 rounded-br-lg border-b-[3px] border-r-[3px]`} />
+      <span className={`${CORNER} left-0 top-0 rounded-tl-lg border-l-[4px] border-t-[4px]`} />
+      <span className={`${CORNER} right-0 top-0 rounded-tr-lg border-r-[4px] border-t-[4px]`} />
+      <span className={`${CORNER} bottom-0 left-0 rounded-bl-lg border-b-[4px] border-l-[4px]`} />
+      <span className={`${CORNER} bottom-0 right-0 rounded-br-lg border-b-[4px] border-r-[4px]`} />
     </>
   );
 }
 
-export function QrPreview({ shortLinkBaseUrl, initialSlug = "" }: QrPreviewProps) {
-  const [slug, setSlug] = useState(initialSlug);
+export function QrPreview({ shortLinkBaseUrl }: QrPreviewProps) {
+  const [slug, setSlug] = useState("");
+  const [destUrl, setDestUrl] = useState("");
   const [dataUrl, setDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    const el = document.querySelector<HTMLInputElement>(
-      'form input[name="slug"]',
-    );
-    if (!el) return;
+    const slugEl = document.querySelector<HTMLInputElement>('form input[name="slug"]');
+    const destEl = document.querySelector<HTMLInputElement>('form input[name="destinationUrl"]');
 
-    const handler = () => setSlug(el.value.trim());
-    el.addEventListener("input", handler);
-    handler();
+    const onSlug = () => setSlug(slugEl?.value.trim() ?? "");
+    const onDest = () => setDestUrl(destEl?.value.trim() ?? "");
 
-    return () => el.removeEventListener("input", handler);
+    slugEl?.addEventListener("input", onSlug);
+    destEl?.addEventListener("input", onDest);
+    onSlug();
+    onDest();
+
+    return () => {
+      slugEl?.removeEventListener("input", onSlug);
+      destEl?.removeEventListener("input", onDest);
+    };
   }, []);
 
   useEffect(() => {
-    if (!slug) {
+    if (!slug && !destUrl) {
       setDataUrl(null);
       return;
     }
 
     let cancelled = false;
-    generateQrDataUrl(shortLinkBaseUrl, slug).then((url) => {
+    generateQrDataUrl(shortLinkBaseUrl, slug || "preview").then((url) => {
       if (!cancelled) setDataUrl(url);
     });
 
-    return () => {
-      cancelled = true;
-    };
-  }, [slug, shortLinkBaseUrl]);
+    return () => { cancelled = true; };
+  }, [slug, destUrl, shortLinkBaseUrl]);
 
   return (
     <div className="flex shrink-0 items-center justify-center">
