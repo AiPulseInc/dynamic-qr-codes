@@ -36,54 +36,87 @@ export function QrCodesTab({
   return (
     <>
       <section className="mt-4 rounded-xl border border-border-card bg-surface-elevated p-5">
-        <h2 className="text-lg font-semibold text-text-heading">Create QR code</h2>
-        <form action={createQrCode} className="mt-3 grid gap-2 md:grid-cols-2">
+        <h2 className="mb-4 text-lg font-semibold text-text-heading">Create QR Code</h2>
+        <form action={createQrCode} className="flex flex-col gap-5 sm:flex-row">
           <input type="hidden" name="returnTo" value={returnTo} />
 
-          <label className="text-sm text-text-muted">
-            Name
-            <input
-              className="mt-1 w-full rounded-lg border border-border-card bg-surface-card px-3 py-2 text-sm text-text-heading placeholder-text-muted/50"
-              name="name"
-              placeholder="Main landing page"
-              required
-              type="text"
-            />
-          </label>
+          {/* QR code preview */}
+          <div className="flex shrink-0 items-center justify-center">
+            <div className="rounded-xl border border-primary/30 bg-surface-card p-3">
+              <div className="grid h-28 w-28 grid-cols-7 grid-rows-7 gap-0.5">
+                {Array.from({ length: 49 }).map((_, i) => {
+                  const row = Math.floor(i / 7);
+                  const col = i % 7;
+                  const isCorner =
+                    (row < 3 && col < 3) ||
+                    (row < 3 && col > 3) ||
+                    (row > 3 && col < 3);
+                  const isCenter = row === 3 && col === 3;
+                  const filled = isCorner || isCenter || [10, 12, 17, 24, 31, 36, 38].includes(i);
+                  return (
+                    <div
+                      key={i}
+                      className={`rounded-[1px] ${filled ? "bg-gradient-to-br from-primary to-accent-teal" : "bg-transparent"}`}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
 
-          <label className="text-sm text-text-muted">
-            Slug
-            <input
-              className="mt-1 w-full rounded-lg border border-border-card bg-surface-card px-3 py-2 text-sm text-text-heading placeholder-text-muted/50"
-              name="slug"
-              placeholder="landing-page"
-              required
-              type="text"
-            />
-          </label>
+          {/* Form fields */}
+          <div className="flex flex-1 flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <label className="text-sm text-text-muted">
+                Name
+                <input
+                  className="mt-1 w-full rounded-lg border border-border-card bg-surface-card px-3 py-2 text-sm text-text-heading placeholder-text-muted/50"
+                  name="name"
+                  placeholder="Main landing page"
+                  required
+                  type="text"
+                />
+              </label>
 
-          <label className="text-sm text-text-muted md:col-span-2">
-            Destination URL
-            <input
-              className="mt-1 w-full rounded-lg border border-border-card bg-surface-card px-3 py-2 text-sm text-text-heading placeholder-text-muted/50"
-              name="destinationUrl"
-              placeholder="https://example.com/landing"
-              required
-              type="url"
-            />
-          </label>
+              <label className="text-sm text-text-muted">
+                Slug
+                <input
+                  className="mt-1 w-full rounded-lg border border-border-card bg-surface-card px-3 py-2 text-sm text-text-heading placeholder-text-muted/50"
+                  name="slug"
+                  placeholder="landing-page"
+                  required
+                  type="text"
+                />
+              </label>
+            </div>
 
-          <label className="flex items-center gap-2 text-sm text-text-heading">
-            <input defaultChecked name="isActive" type="checkbox" value="true" className="accent-primary" />
-            Active
-          </label>
+            <label className="text-sm text-text-muted">
+              Destination URL
+              <input
+                className="mt-1 w-full rounded-lg border border-border-card bg-surface-card px-3 py-2 text-sm text-text-heading placeholder-text-muted/50"
+                name="destinationUrl"
+                placeholder="https://example.com/landing"
+                required
+                type="url"
+              />
+            </label>
 
-          <button
-            className="rounded-lg bg-gradient-to-r from-primary to-accent-teal px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30"
-            type="submit"
-          >
-            Create QR code
-          </button>
+            <div className="flex items-center justify-between">
+              {/* Toggle switch */}
+              <label className="relative inline-flex cursor-pointer items-center gap-2">
+                <input defaultChecked name="isActive" type="checkbox" value="true" className="peer sr-only" />
+                <div className="h-5 w-9 rounded-full bg-border-subtle transition-colors duration-200 after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow-sm after:transition-transform after:duration-200 peer-checked:bg-primary peer-checked:after:translate-x-4" />
+                <span className="text-sm font-medium text-text-heading">Active</span>
+              </label>
+
+              <button
+                className="rounded-lg bg-gradient-to-r from-primary to-accent-teal px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30"
+                type="submit"
+              >
+                Create QR code
+              </button>
+            </div>
+          </div>
         </form>
       </section>
 
