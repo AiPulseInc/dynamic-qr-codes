@@ -111,15 +111,16 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
                 />
               </label>
 
-              <label className="flex items-center gap-2 text-sm text-text-heading">
+              <label className="relative inline-flex cursor-pointer items-center gap-2">
                 <input
                   defaultChecked={qrCode.isActive}
                   name="isActive"
                   type="checkbox"
                   value="true"
-                  className="accent-primary"
+                  className="peer sr-only"
                 />
-                Active
+                <div className="h-5 w-9 rounded-full bg-border-subtle transition-colors duration-200 after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow-sm after:transition-transform after:duration-200 peer-checked:bg-primary peer-checked:after:translate-x-4" />
+                <span className="text-sm font-medium text-text-heading">Active</span>
               </label>
 
               <button

@@ -1,28 +1,30 @@
 "use client";
 
 import QRCode from "qrcode";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type QrPreviewProps = {
   shortLinkBaseUrl: string;
 };
 
+const CORNER_CLASSES = "absolute h-5 w-5 border-primary/60";
+
+function CornerBrackets() {
+  return (
+    <>
+      <span className={`${CORNER_CLASSES} left-0 top-0 rounded-tl-lg border-l-2 border-t-2`} />
+      <span className={`${CORNER_CLASSES} right-0 top-0 rounded-tr-lg border-r-2 border-t-2`} />
+      <span className={`${CORNER_CLASSES} bottom-0 left-0 rounded-bl-lg border-b-2 border-l-2`} />
+      <span className={`${CORNER_CLASSES} bottom-0 right-0 rounded-br-lg border-b-2 border-r-2`} />
+    </>
+  );
+}
+
 export function QrPreview({ shortLinkBaseUrl }: QrPreviewProps) {
   const [slug, setSlug] = useState("");
   const [dataUrl, setDataUrl] = useState<string | null>(null);
-  const formRef = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
-    const form = formRef.current;
-    if (!form) {
-      // Walk up from the component to find the parent form
-      return;
-    }
-  }, []);
-
-  // Find the parent form on mount to listen to the slug input
-  useEffect(() => {
-    // We use a small trick: find the slug input by name in the closest form
     const el = document.querySelector<HTMLInputElement>(
       'form input[name="slug"]',
     );
@@ -30,7 +32,6 @@ export function QrPreview({ shortLinkBaseUrl }: QrPreviewProps) {
 
     const handler = () => setSlug(el.value.trim());
     el.addEventListener("input", handler);
-    // Set initial value
     handler();
 
     return () => el.removeEventListener("input", handler);
@@ -64,15 +65,15 @@ export function QrPreview({ shortLinkBaseUrl }: QrPreviewProps) {
 
   return (
     <div className="flex shrink-0 items-center justify-center">
-      <div className="rounded-xl border-2 border-primary/40 bg-surface-card p-2 shadow-lg shadow-primary/10">
+      <div className="relative p-3">
+        <CornerBrackets />
         {dataUrl ? (
           <img
             src={dataUrl}
             alt="QR code preview"
-            className="h-32 w-32 rounded-lg"
+            className="h-32 w-32"
           />
         ) : (
-          /* Decorative placeholder when no slug is entered */
           <div className="grid h-32 w-32 grid-cols-7 grid-rows-7 gap-0.5 p-2">
             {Array.from({ length: 49 }).map((_, i) => {
               const row = Math.floor(i / 7);
@@ -89,7 +90,7 @@ export function QrPreview({ shortLinkBaseUrl }: QrPreviewProps) {
               return (
                 <div
                   key={i}
-                  className={`rounded-[1px] ${filled ? "bg-gradient-to-br from-primary/40 to-accent-teal/40" : "bg-transparent"}`}
+                  className={`rounded-[1px] ${filled ? "bg-gradient-to-br from-primary/30 to-accent-teal/30" : "bg-transparent"}`}
                 />
               );
             })}
