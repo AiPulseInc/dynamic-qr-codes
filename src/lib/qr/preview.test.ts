@@ -64,38 +64,43 @@ describe("QrPreview component structure", () => {
   });
 });
 
-describe("QrShareModal component structure", () => {
-  const shareSrc = fs.readFileSync(
+describe("QrExportModal component structure", () => {
+  const exportSrc = fs.readFileSync(
     path.resolve(__dirname, "../../components/qr-share-modal.tsx"),
     "utf-8",
   );
 
   it("has error correction options (L, M, H)", () => {
-    expect(shareSrc).toContain("Low 7%");
-    expect(shareSrc).toContain("Medium 15%");
-    expect(shareSrc).toContain("High 30%");
+    expect(exportSrc).toContain("Low 7%");
+    expect(exportSrc).toContain("Medium 15%");
+    expect(exportSrc).toContain("High 30%");
   });
 
   it("has QR size options (150, 200, 300)", () => {
-    expect(shareSrc).toContain("Small 150px");
-    expect(shareSrc).toContain("Medium 200px");
-    expect(shareSrc).toContain("Large 300px");
+    expect(exportSrc).toContain("Small 150px");
+    expect(exportSrc).toContain("Medium 200px");
+    expect(exportSrc).toContain("Large 300px");
   });
 
   it("has copy, share, and save action buttons", () => {
-    expect(shareSrc).toContain("Copy to clipboard");
-    expect(shareSrc).toContain("handleShare");
-    expect(shareSrc).toContain("handleSave");
+    expect(exportSrc).toContain('"Copy"');
+    expect(exportSrc).toContain("handleShare");
+    expect(exportSrc).toContain("handleSave");
   });
 
   it("uses shared CornerBrackets and generateQrDataUrl", () => {
-    expect(shareSrc).toContain("CornerBrackets");
-    expect(shareSrc).toContain("generateQrDataUrl");
+    expect(exportSrc).toContain("CornerBrackets");
+    expect(exportSrc).toContain("generateQrDataUrl");
   });
 
-  it("renders a Share button trigger with gradient styling", () => {
-    expect(shareSrc).toContain("from-primary to-accent-teal");
-    expect(shareSrc).toContain("Share QR Code");
+  it("renders an Export button trigger with subtle styling", () => {
+    expect(exportSrc).toContain("border-primary bg-primary/10");
+    expect(exportSrc).toContain("Export QR Code");
+  });
+
+  it("regenerates QR preview when ecl or size changes", () => {
+    expect(exportSrc).toContain("ecl, size");
+    expect(exportSrc).toContain("generateQrDataUrl(shortLinkBaseUrl, slug, ecl)");
   });
 });
 

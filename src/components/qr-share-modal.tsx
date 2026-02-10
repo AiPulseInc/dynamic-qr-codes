@@ -20,12 +20,12 @@ const SIZE_OPTIONS: { value: QrSize; label: string }[] = [
   { value: 300, label: "Large 300px" },
 ];
 
-type QrShareModalProps = {
+type QrExportModalProps = {
   slug: string;
   shortLinkBaseUrl: string;
 };
 
-export function QrShareModal({ slug, shortLinkBaseUrl }: QrShareModalProps) {
+export function QrExportModal({ slug, shortLinkBaseUrl }: QrExportModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [ecl, setEcl] = useState<ErrorCorrectionLevel>("M");
@@ -37,12 +37,12 @@ export function QrShareModal({ slug, shortLinkBaseUrl }: QrShareModalProps) {
     if (!isOpen) return;
 
     let cancelled = false;
-    generateQrDataUrl(shortLinkBaseUrl, slug).then((url) => {
+    generateQrDataUrl(shortLinkBaseUrl, slug, ecl).then((url) => {
       if (!cancelled) setPreviewUrl(url);
     });
 
     return () => { cancelled = true; };
-  }, [isOpen, slug, shortLinkBaseUrl]);
+  }, [isOpen, slug, shortLinkBaseUrl, ecl, size]);
 
   function openModal() {
     setIsOpen(true);
@@ -122,9 +122,9 @@ export function QrShareModal({ slug, shortLinkBaseUrl }: QrShareModalProps) {
       <button
         type="button"
         onClick={openModal}
-        className="rounded-lg bg-gradient-to-r from-primary to-accent-teal px-2.5 py-1 text-xs font-medium text-white shadow-sm shadow-primary/20 transition-all duration-200 hover:shadow-md hover:shadow-primary/30"
+        className="rounded-lg border border-primary bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary transition-colors duration-200 hover:bg-primary hover:text-white"
       >
-        Share
+        Export
       </button>
 
       <dialog
@@ -136,7 +136,7 @@ export function QrShareModal({ slug, shortLinkBaseUrl }: QrShareModalProps) {
           <div className="p-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-text-heading">Share QR Code</h2>
+              <h2 className="text-lg font-semibold text-text-heading">Export QR Code</h2>
               <button
                 type="button"
                 onClick={closeModal}
@@ -213,7 +213,7 @@ export function QrShareModal({ slug, shortLinkBaseUrl }: QrShareModalProps) {
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
-                {copyFeedback ? "Copied!" : "Copy to clipboard"}
+                {copyFeedback ? "Copied!" : "Copy"}
               </button>
 
               <button

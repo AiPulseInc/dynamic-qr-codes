@@ -6,12 +6,17 @@ export function buildRedirectUrl(shortLinkBaseUrl: string, slug: string): string
 
 const GRADIENT_DEFS = `<defs><linearGradient id="qr-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#06B6D4"/></linearGradient></defs>`;
 
-export async function generateQrDataUrl(shortLinkBaseUrl: string, slug: string): Promise<string> {
+export async function generateQrDataUrl(
+  shortLinkBaseUrl: string,
+  slug: string,
+  errorCorrectionLevel: "L" | "M" | "H" = "M",
+): Promise<string> {
   const redirectUrl = buildRedirectUrl(shortLinkBaseUrl, slug);
 
   let svg = await QRCode.toString(redirectUrl, {
     type: "svg",
     margin: 1,
+    errorCorrectionLevel,
     color: {
       dark: "#10B981",
       light: "#00000000",

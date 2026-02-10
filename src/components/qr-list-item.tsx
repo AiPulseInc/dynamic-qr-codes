@@ -1,7 +1,7 @@
 "use client";
 
 import { QrEditModal } from "@/components/qr-edit-modal";
-import { QrShareModal } from "@/components/qr-share-modal";
+import { QrExportModal } from "@/components/qr-share-modal";
 import type { QrCodeListItem } from "@/lib/qr/types";
 
 type QrListItemProps = {
@@ -37,7 +37,7 @@ export function QrListItem({ qrCode, returnTo, shortLinkBaseUrl }: QrListItemPro
       </td>
       <td className="px-3 py-2.5">
         <div className="flex items-center justify-center gap-1.5">
-          <QrShareModal
+          <QrExportModal
             slug={qrCode.slug}
             shortLinkBaseUrl={shortLinkBaseUrl}
           />
