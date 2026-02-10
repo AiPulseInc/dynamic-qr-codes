@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { createQrCode } from "@/app/dashboard/actions";
+import { QrPreview } from "@/app/dashboard/components/QrPreview";
 import { buildDashboardUrl } from "@/app/dashboard/url";
 import { QrListItem } from "@/components/qr-list-item";
 import type { QrCodeListItem } from "@/lib/qr/types";
@@ -40,29 +41,8 @@ export function QrCodesTab({
         <form action={createQrCode} className="flex flex-col gap-5 sm:flex-row">
           <input type="hidden" name="returnTo" value={returnTo} />
 
-          {/* QR code preview */}
-          <div className="flex shrink-0 items-center justify-center">
-            <div className="rounded-xl border border-primary/30 bg-surface-card p-3">
-              <div className="grid h-28 w-28 grid-cols-7 grid-rows-7 gap-0.5">
-                {Array.from({ length: 49 }).map((_, i) => {
-                  const row = Math.floor(i / 7);
-                  const col = i % 7;
-                  const isCorner =
-                    (row < 3 && col < 3) ||
-                    (row < 3 && col > 3) ||
-                    (row > 3 && col < 3);
-                  const isCenter = row === 3 && col === 3;
-                  const filled = isCorner || isCenter || [10, 12, 17, 24, 31, 36, 38].includes(i);
-                  return (
-                    <div
-                      key={i}
-                      className={`rounded-[1px] ${filled ? "bg-gradient-to-br from-primary to-accent-teal" : "bg-transparent"}`}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          {/* Live QR code preview */}
+          <QrPreview shortLinkBaseUrl={shortLinkBaseUrl} />
 
           {/* Form fields */}
           <div className="flex flex-1 flex-col gap-3">
