@@ -29,15 +29,22 @@ export async function GET(
 
     const qrCode = await getOwnedQrCodeBySlug(profile.id, normalizedSlug);
     const env = getServerEnv();
+    const url = new URL(request.url);
     const redirectUrl = `${env.SHORT_LINK_BASE_URL.replace(/\/$/, "")}/r/${qrCode.slug}`;
+
+    const eclParam = url.searchParams.get("ecl");
+    const ecl = (["L", "M", "H"].includes(eclParam ?? "") ? eclParam : "M") as "L" | "M" | "H";
+
+    const widthParam = parseInt(url.searchParams.get("width") ?? "", 10);
+    const width = [150, 200, 300, 768].includes(widthParam) ? widthParam : 768;
+
     const pngBuffer = await QRCode.toBuffer(redirectUrl, {
       type: "png",
-      width: 768,
+      width,
       margin: 1,
-      errorCorrectionLevel: "M",
+      errorCorrectionLevel: ecl,
     });
 
-    const url = new URL(request.url);
     const shouldDownload = url.searchParams.get("download") === "1";
     const headers = new Headers({
       "content-type": "image/png",

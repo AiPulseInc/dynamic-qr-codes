@@ -136,7 +136,7 @@ export function QrCodesTab({
           </select>
 
           <button
-            className="rounded-lg border border-border-card bg-surface-card px-4 py-2 text-sm font-medium text-text-heading transition-colors duration-200 hover:border-primary hover:text-primary"
+            className="rounded-lg bg-gradient-to-r from-primary to-accent-teal px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30"
             type="submit"
           >
             Apply filters
@@ -154,10 +154,10 @@ export function QrCodesTab({
                 <thead className="sticky top-0 bg-surface-card text-left">
                   <tr className="border-b border-border-subtle">
                     <th className="px-3 py-2 text-xs font-medium text-text-muted">Name</th>
-                    <th className="px-3 py-2 text-xs font-medium text-text-muted">Slug</th>
-                    <th className="px-3 py-2 text-xs font-medium text-text-muted">Created</th>
-                    <th className="px-3 py-2 text-xs font-medium text-text-muted">Status</th>
-                    <th className="px-3 py-2 text-xs font-medium text-text-muted">Actions</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-text-muted">Slug</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-text-muted">Created</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-text-muted">Status</th>
+                    <th className="px-3 py-2 text-center text-xs font-medium text-text-muted">Actions</th>
                   </tr>
                 </thead>
                 <tbody>

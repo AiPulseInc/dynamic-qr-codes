@@ -58,7 +58,7 @@ export function QrEditModal({ qrCode, returnTo, shortLinkBaseUrl }: QrEditModalP
       <button
         type="button"
         onClick={openModal}
-        className="rounded border border-border-card bg-surface-card px-2.5 py-1 text-xs text-text-heading transition-colors duration-200 hover:border-primary hover:text-primary"
+        className="rounded-lg bg-gradient-to-r from-primary to-accent-teal px-2.5 py-1 text-xs font-medium text-white shadow-sm shadow-primary/20 transition-all duration-200 hover:shadow-md hover:shadow-primary/30"
       >
         Edit
       </button>

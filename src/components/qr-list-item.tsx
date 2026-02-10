@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
-
 import { QrEditModal } from "@/components/qr-edit-modal";
+import { QrShareModal } from "@/components/qr-share-modal";
 import type { QrCodeListItem } from "@/lib/qr/types";
 
 type QrListItemProps = {
@@ -18,16 +17,14 @@ function formatDate(value: Date): string {
 }
 
 export function QrListItem({ qrCode, returnTo, shortLinkBaseUrl }: QrListItemProps) {
-  const downloadHref = `/api/qr/${encodeURIComponent(qrCode.slug)}?download=1`;
-
   return (
     <tr className="border-b border-border-subtle/50 last:border-0">
       <td className="px-3 py-2.5 text-text-heading">{qrCode.name}</td>
-      <td className="px-3 py-2.5">
+      <td className="px-3 py-2.5 text-center">
         <span className="rounded bg-surface-card px-2 py-0.5 font-mono text-xs text-text-muted">{qrCode.slug}</span>
       </td>
-      <td className="px-3 py-2.5 text-text-muted">{formatDate(qrCode.createdAt)}</td>
-      <td className="px-3 py-2.5">
+      <td className="px-3 py-2.5 text-center text-text-muted">{formatDate(qrCode.createdAt)}</td>
+      <td className="px-3 py-2.5 text-center">
         <span
           className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
             qrCode.isActive
@@ -39,14 +36,11 @@ export function QrListItem({ qrCode, returnTo, shortLinkBaseUrl }: QrListItemPro
         </span>
       </td>
       <td className="px-3 py-2.5">
-        <div className="flex items-center gap-1.5">
-          <Link
-            className="rounded border border-border-card bg-surface-card px-2.5 py-1 text-xs text-text-heading transition-colors duration-200 hover:border-primary hover:text-primary"
-            href={downloadHref}
-            prefetch={false}
-          >
-            Download
-          </Link>
+        <div className="flex items-center justify-center gap-1.5">
+          <QrShareModal
+            slug={qrCode.slug}
+            shortLinkBaseUrl={shortLinkBaseUrl}
+          />
           <QrEditModal
             qrCode={qrCode}
             returnTo={returnTo}
